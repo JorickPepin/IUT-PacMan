@@ -15,17 +15,17 @@ import iut.GameItem;
  */
 public class EmptySquare extends Square {
     
-    private final String type = "empty";
+    private String type = "emptyWithPoint";
     
     public EmptySquare(Game g, int i, int j) {
-        super(g, "empty", i, j);
+        super(g, "emptyWithPoint", i, j);
     }
 
     @Override
     public String getItemType() {
         return this.type;
     }
-
+    
     @Override
     public String toString() {
         return "E"; 
@@ -34,5 +34,10 @@ public class EmptySquare extends Square {
     @Override
     public void collideEffect(GameItem gi) {
         ;
+    }
+
+    @Override
+    public void setItemType(String type) {
+        this.type = type;
     }
 }

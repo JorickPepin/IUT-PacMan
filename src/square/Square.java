@@ -33,7 +33,9 @@ public abstract class Square extends BoxGameItem {
     }
 
     public abstract String getItemType();
-
+    
+    public abstract void setItemType(String type);
+    
     @Override
     public void evolve(long l) {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

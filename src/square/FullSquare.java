@@ -14,7 +14,7 @@ import iut.GameItem;
  */
 public class FullSquare extends Square {
     
-    private final String type = "full";
+    private String type = "full";
     
     public FullSquare(Game g, int i, int j) {
         super(g, "full", i, j);
@@ -35,5 +35,10 @@ public class FullSquare extends Square {
     @Override
     public String getItemType() {
         return "full";
+    }
+
+    @Override
+    public void setItemType(String type) {
+        this.type = type;
     }
 }
