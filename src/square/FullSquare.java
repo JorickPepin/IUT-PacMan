@@ -17,7 +17,7 @@ public class FullSquare extends Square {
     private String type = "full";
     
     public FullSquare(Game g, int i, int j) {
-        super(g, "full", i, j);
+        super(g, "Squares/full", i, j);
     }
 
     @Override

@@ -41,9 +41,16 @@ public class PacMan extends Game {
 
     @Override
     protected void createItems() {
+        
+        // création du joueur 
+        // (position de départ sur les cases (x=2, y=9) = (2 * 28, 9 * 28) en pixels)
         player = new Player(this,56,252);
         this.addItem(player); 
         player.setSquares(map.getSquares());
+        
+        // ajout du label de Score
+        Score labelScore = new Score(this, "Score/labelScore", 10, 8);
+        this.addItem(labelScore);
     }
 
     @Override
@@ -70,15 +77,6 @@ public class PacMan extends Game {
         return false; 
     }
 
-    /**
-     * /!\ Méthode non codée
-     * @return 
-     */
-    @Override
-    public Vector getGravity() {
-        Vector v = new Vector();
-        
-        return v;
-    }
-  
+    // gravité non utilisée dans ce jeu
+    @Override public Vector getGravity() {return new Vector();}
 }

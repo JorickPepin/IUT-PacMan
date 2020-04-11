@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package pacman;
 
 import iut.BoxGameItem;
@@ -68,6 +64,7 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private final Life objLife;
     
+    private final Score objScore;
     private int score = 0;
 
     public Player(Game g, int x, int y) {
@@ -78,43 +75,39 @@ public class Player extends BoxGameItem implements KeyListener {
         this.j = x / 28;
 
         // au départ, on a 2 vies
-        this.objLife = new Life(g, 2);
+        this.objLife = new Life(g, "Lives/2");
         g.addItem(this.objLife);
-    }
-
-    @Override
-    public boolean isCollide(GameItem gi) {
-        return false;
-    }
-
-    @Override
-    public void collideEffect(GameItem gi) {
-    }
-
-    @Override
-    public String getItemType() {
-        return "player";
+        
+        // initialisation d'un object Score 
+        this.objScore = new Score(g, "Score/0", 0, 0);   
     }
 
     /**
      * Méthode permettant de fixer les booleens si les cases autour du perso
-     * sont pleines
+     * sont pleines (murs)
      */
     private void sideBlocked() {
 
+        // on enlève le cas où j vaut 0 ou 24 car on teste les j-1 donc si j==0, on teste j-1 et cette valeur n'existe pas donc erreur
+        // pas besoin de tester i car l'utilisateur ne peut jamais aller sur les bords extrêmes du i contrairement au j (pour traverser)
         if (this.j != 0 && this.j != 24) {
+            
+            // si le type de la case du dessus est full
             if ("full".equals(squares[i - 1][j].getItemType())) {
                 upBlocked = true;
             }
 
+            // si le type de la case en dessous est full
             if ("full".equals(squares[i + 1][j].getItemType())) {
                 downBlocked = true;
             }
 
+            // si le type de la case de gauche est full
             if ("full".equals(squares[i][j - 1].getItemType())) {
                 leftBlocked = true;
             }
 
+            // si le type de la case de droite est full
             if ("full".equals(squares[i][j + 1].getItemType())) {
                 rightBlocked = true;
             }
@@ -138,8 +131,8 @@ public class Player extends BoxGameItem implements KeyListener {
             crossTheMap(direction);
         }
         
-        // est vrai 1 fois sur 8 pour limiter la vitesse du pacman
-        if (count % 8 == 0) {
+        // est vrai 1 fois sur 12 pour limiter la vitesse du pacman
+        if (count % 12 == 0) {
             switch (direction) {
                 case "left":
                     this.pacmanSpriteName = "Avance/pacmanleft";
@@ -200,7 +193,6 @@ public class Player extends BoxGameItem implements KeyListener {
 
     /**
      * Appelée lorqu'il faut changer de côté sur la map (doite ou gauche)
-     *
      * @param direction = la direction du pacman
      */
     private void crossTheMap(String direction) {
@@ -224,23 +216,20 @@ public class Player extends BoxGameItem implements KeyListener {
      * Mettant permettant de changer une case avec point en case vide   
      */
     private void changeSquare() {
-        squares[i][j].changeSprite("empty");
-        squares[i][j].setItemType("empty");
+        this.squares[i][j].changeSprite("Squares/empty");
+        this.squares[i][j].setItemType("empty");
         
         // on incrémente le score de 10 car il a mangé le point
-        score += 10;
+        this.score += 10;
         
-        System.out.println(score);
+        this.objScore.setScore(score);
     }
     
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
+    // Amélioration :
+    // faire en sorte que le déplacement soit le même que dans la version originale
+    // càd ne pouvoir changer de direction que si celle-ci ne contient pas une case pleine
+    // actuellement : possibilité de se bloquer contre une paroi
+    
     /**
      * On utilise keyReleased et pas keyPressed car si l'utilisateur reste
      * appuyé sur une flèche lorsqu'il est bloqué, les tests ne vont plus être
@@ -273,5 +262,19 @@ public class Player extends BoxGameItem implements KeyListener {
 
     public void setSquares(Square[][] squares) {
         this.squares = squares;
+    }
+    
+    @Override
+    public boolean isCollide(GameItem gi) {
+        return false;
+    }
+
+    @Override public void collideEffect(GameItem gi) {}
+    @Override public void keyPressed(KeyEvent e) {}
+    @Override public void keyTyped(KeyEvent e) {}
+    
+    @Override
+    public String getItemType() {
+        return "player";
     }
 }

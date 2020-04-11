@@ -18,7 +18,7 @@ public class EmptySquare extends Square {
     private String type = "emptyWithPoint";
     
     public EmptySquare(Game g, int i, int j) {
-        super(g, "emptyWithPoint", i, j);
+        super(g, "Squares/emptyWithPoint", i, j);
     }
 
     @Override

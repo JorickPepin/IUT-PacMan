@@ -14,8 +14,8 @@ import iut.GameItem;
  */
 public class Life extends GameItem {
 
-    public Life(Game g, int val) {
-        super(g, String.valueOf(val), 10, 540);  
+    public Life(Game g, String name) {
+        super(g, name, 10, 540);  
     }
         
     @Override
