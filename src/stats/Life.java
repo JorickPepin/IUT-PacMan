@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pacman;
+package stats;
 
 import iut.Game;
 import iut.GameItem;
@@ -14,8 +14,8 @@ import iut.GameItem;
  */
 public class Life extends GameItem {
 
-    public Life(Game g, String name) {
-        super(g, name, 10, 540);  
+    public Life(Game g, String name, int x, int y) {
+        super(g, name, x, y);  
     }
         
     @Override

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package square;
 
 import iut.BoxGameItem;
@@ -37,18 +33,16 @@ public abstract class Square extends BoxGameItem {
     public abstract void setItemType(String type);
     
     @Override
-    public void evolve(long l) {
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void evolve(long l) {}
 
     @Override
     public void draw(Graphics g) throws Exception {
-        super.draw(g); //To change body of generated methods, choose Tools | Templates.
+        super.draw(g);
     }
 
     @Override
     public void changeSprite(String name) {
-        super.changeSprite(name); //To change body of generated methods, choose Tools | Templates.
+        super.changeSprite(name); 
     }
 
     public int getI() {

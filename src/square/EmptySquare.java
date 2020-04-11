@@ -17,6 +17,18 @@ public class EmptySquare extends Square {
     
     private String type = "emptyWithPoint";
     
+    /**
+     * Compteur pour limiter la vitesse dans le evolve
+     * on utilise un byte car codé sur 8 bits => modulo calculé sur des 
+     * plus petites valeurs qu'avec un int (complexité améliorée ?)
+     */
+    private byte count = 0;
+    
+    /**
+     * Attribut permettant de faire clignoter les gros points
+     */
+    private boolean bigPointIsDiplayed = true;
+    
     public EmptySquare(Game g, int i, int j) {
         super(g, "Squares/emptyWithPoint", i, j);
     }
@@ -31,6 +43,32 @@ public class EmptySquare extends Square {
         return "E"; 
     }
 
+    @Override
+    public void evolve(long l) {
+        // est vrai 1 fois sur 20 afin de reduire la vitesse d'exécution
+        if (count % 20 == 0) {
+            // si la case contient un gros point, on appelle la méthode
+            if ("emptyWithBigPoint".equals(this.getItemType()) ) {
+                flickerBigPoint();        
+            }
+        }
+        count++;
+        
+    }
+
+    /**
+     * Méthode permettant de faire clignoter les gros points
+     */
+    private void flickerBigPoint() {
+        if (bigPointIsDiplayed) {
+            changeSprite("Squares/empty");
+            this.bigPointIsDiplayed = false;
+        } else {
+            changeSprite("Squares/emptyWithBigPoint");
+            this.bigPointIsDiplayed = true;
+        }
+    }
+    
     @Override
     public void collideEffect(GameItem gi) {
         ;

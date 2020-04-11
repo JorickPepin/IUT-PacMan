@@ -1,5 +1,5 @@
 
-package pacman;
+package stats;
 
 import iut.Game;
 import iut.GameItem;

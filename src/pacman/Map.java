@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package pacman;
 
 import iut.Game;
@@ -50,10 +46,27 @@ public class Map {
         
         for(int i=0; i<nbRows; i++) {
             for(int j=0; j<nbCols; j++) {
-                if (lines.get(i).charAt(j) == '1') {     // dans le .map, si le caractère est 1, alors la case est pleine
-                   squares[i][j] = new FullSquare(g, i, j); 
-                } else {                                 // dans le .map, si le caractère est 0, alors la case est vide
-                    squares[i][j] = new EmptySquare(g, i, j); 
+                switch (lines.get(i).charAt(j)) {
+                    case '1':
+                        // dans le .map, si le caractère est 1, alors la case est pleine
+                        squares[i][j] = new FullSquare(g, i, j);
+                        break;
+                    case '2':
+                        // dans le .map, si le caractère est 2, alors la case est vide sans point
+                        squares[i][j] = new EmptySquare(g, i, j);
+                        squares[i][j].setItemType("empty");
+                        squares[i][j].changeSprite("Squares/empty");
+                        break;
+                    case '3':
+                        // dans le .map, si le caractère est 3, alors la case est vide avec un gros point
+                        squares[i][j] = new EmptySquare(g, i, j);
+                        squares[i][j].setItemType("emptyWithBigPoint");
+                        squares[i][j].changeSprite("Squares/emptyWithBigPoint");
+                        break;
+                    default:
+                        // dans le .map, si le caractère est 0, alors la case est vide avec un petit point (cas général par défaut)
+                        squares[i][j] = new EmptySquare(g, i, j);
+                        break;
                 }
                 
             }

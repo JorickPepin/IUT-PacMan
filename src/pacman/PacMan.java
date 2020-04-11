@@ -1,6 +1,8 @@
 
 package pacman;
 
+import stats.Life;
+import stats.Score;
 import iut.Game;
 import iut.Vector;
 import java.awt.Color;
@@ -48,9 +50,14 @@ public class PacMan extends Game {
         this.addItem(player); 
         player.setSquares(map.getSquares());
         
-        // ajout du label de Score
+        // ajout du label de score
         Score labelScore = new Score(this, "Score/labelScore", 10, 8);
         this.addItem(labelScore);
+        
+        // ajout du label du nombre de vies
+        Life labelLife = new Life(this, "Lives/labelLives", 10, 540);
+        this.addItem(labelLife);
+        
     }
 
     @Override
