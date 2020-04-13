@@ -24,22 +24,22 @@ public class Map {
     /**
      * La map est composée de 20 lignes
      */
-    private final int nbRows = 20;
+    private final int NB_ROWS = 20;
     
     /**
      * La map est composée de 25 colonnes
      */ 
-    private final int nbCols = 25;
+    private final int NB_COLS = 25;
     
     /**
      * Constructeur de la map
-     * @param g
-     * @throws IOException 
+     * @param g = le jeu
+     * @throws IOException si le fichier n'est pas trouvé
      */
     public Map(Game g) throws IOException {
         
         // initialisation du tableau avec le nombre de lignes et colonnes
-        this.squares = new Square[nbRows][nbCols];
+        this.squares = new Square[NB_ROWS][NB_COLS];
         
         // la map est "écrite" avec un fichier .map qu'on récupère ici
         List<String> lines = Files.readAllLines(Paths.get("ressources/map.map"));
@@ -47,8 +47,8 @@ public class Map {
         // on "balaie" le fichier .map (qui est un simple fichier texte)
         // et on récupère le caractère correspond à la case
         // pour chaque caractère, la case a une fonction ou une apparence différente
-        for(int i=0; i<nbRows; i++) {
-            for(int j=0; j<nbCols; j++) {
+        for(int i=0; i<NB_ROWS; i++) {
+            for(int j=0; j<NB_COLS; j++) {
                 switch (lines.get(i).charAt(j)) {
                     case '1':
                         // dans le .map, si le caractère est 1, alors la case est pleine
@@ -191,30 +191,13 @@ public class Map {
                         squares[i][j] = new EmptySquare(g, i, j);
                         break;
                 }
-                
             }
         }
     }
 
-    /**
-     * Permet de dessiner la map dans la console pour faire des tests
-     * (voir Main)
-     * E = empty / F = full
-     * @return 
-     */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
-        for (int i = 0; i < nbRows; ++i) {
-            for (int j = 0; j < nbCols; ++j) {
-                sb.append(squares[i][j]);
-            }
-            
-            sb.append("\n");
-        }
-        
-        return sb.toString();
+        return "";
     }
 
     public Square[][] getSquares() {

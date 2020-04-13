@@ -36,11 +36,6 @@ public abstract class Square extends BoxGameItem {
     public void evolve(long l) {}
 
     @Override
-    public void draw(Graphics g) throws Exception {
-        super.draw(g);
-    }
-
-    @Override
     public void changeSprite(String name) {
         super.changeSprite(name); 
     }

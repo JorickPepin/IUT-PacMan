@@ -11,7 +11,6 @@ import square.Square;
 
 /**
  * Classe représentant le player (pacman)
- *
  * @author Jorick
  */
 public class Player extends BoxGameItem implements KeyListener {
@@ -67,9 +66,31 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private final Life objLife;
 
+    /**
+     * Attribut permettant de récupérer une instance de score et le fixer
+     * suivant le score du joueur
+     */
     private final Score objScore;
+    
+    /**
+     * Variable représentant le score du jour
+     * Ce score est passé à l'instance de Score pour pouvoir être mis à jour
+     * dans l'affichage
+     */
     private int score = 0;
 
+    /**
+     * Constance représentant la vitesse de pacman
+     * /!\ plus la valeur est grande, moins la vitesse est élevée
+     */
+    private static final int SPEED = 10;
+    
+    /**
+     * Constructeur du joueur
+     * @param g = le jeu
+     * @param x = position de départ en abscisse
+     * @param y = position de départ en ordonnée
+     */
     public Player(Game g, int x, int y) {
         super(g, "Avance/pacmanright", x, y);
 
@@ -85,44 +106,9 @@ public class Player extends BoxGameItem implements KeyListener {
         this.objScore = new Score(g, "Score/0", 0, 0);
     }
 
-    /**
-     * Méthode permettant de fixer les booleens si les cases autour du perso
-     * sont pleines (murs)
-     */
-    private void sideBlocked() {
-
-        // on enlève le cas où j vaut 0 ou 24 car on teste les j-1 donc si j==0, on teste j-1 et cette valeur n'existe pas donc erreur
-        // pas besoin de tester i car l'utilisateur ne peut jamais aller sur les bords extrêmes du i contrairement au j (pour traverser)
-        if (this.j != 0 && this.j != 24) {
-
-            // si le type de la case au-dessus est full
-            if ("full".equals(squares[i - 1][j].getItemType())) {
-                upBlocked = true;
-            }
-
-            // si le type de la case en-dessous est full
-            if ("full".equals(squares[i + 1][j].getItemType())) {
-                downBlocked = true;
-            }
-
-            // si le type de la case à gauche est full
-            if ("full".equals(squares[i][j - 1].getItemType())) {
-                leftBlocked = true;
-            }
-
-            // si le type de la case à droite est full
-            if ("full".equals(squares[i][j + 1].getItemType())) {
-                rightBlocked = true;
-            }
-        }
-    }
-
     @Override
     public void evolve(long l) {
-
-        // on regarde si les cases autour du perso sont pleines
-        sideBlocked();
-
+        
         // si pacman passe sur une case contenant un petit point ou un gros, 
         // alors on change la case et on incrémente le score
         if (("emptyWithPoint".equals(squares[i][j].getItemType()))
@@ -135,9 +121,13 @@ public class Player extends BoxGameItem implements KeyListener {
         if (this.i == 9 && (this.j == 0 || this.j == 24)) {
             crossTheMap(direction);
         }
+            
+        // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
+        if (count % SPEED == 0) {
+            
+            // on regarde si les cases autour du perso sont pleines
+            sideBlocked();
 
-        // est vrai 1 fois sur 10 pour limiter la vitesse du pacman
-        if (count % 10 == 0) {
             switch (direction) {
                 case "left":
                     this.pacmanSpriteName = "Avance/pacmanleft";
@@ -169,6 +159,7 @@ public class Player extends BoxGameItem implements KeyListener {
                     break;
             }
 
+            // on réinitialise les différentes direction
             leftBlocked = false;
             downBlocked = false;
             rightBlocked = false;
@@ -181,25 +172,55 @@ public class Player extends BoxGameItem implements KeyListener {
     }
 
     /**
-     * Méthode permettant de changer l'image du pacman On change l'image 1 fois
-     * sur 2 avec le booléen
-     *
+     * Méthode permettant de fixer les booleens si les cases autour du perso
+     * sont pleines (murs)
+     */
+    private void sideBlocked() {
+
+        // on enlève le cas où j vaut 0 ou 24 car on teste les j-1 donc si j==0, on teste j-1 et cette valeur n'existe pas donc erreur
+        // pas besoin de tester i car l'utilisateur ne peut jamais aller sur les bords extrêmes du i contrairement au j (pour traverser)
+        if (this.j != 0 && this.j != 24) {
+
+            // si le type de la case au-dessus est full
+            if ("full".equals(squares[i - 1][j].getItemType())) {
+                upBlocked = true; // le haut est bloqué
+            }
+
+            // si le type de la case en-dessous est full
+            if ("full".equals(squares[i + 1][j].getItemType())) {
+                downBlocked = true; // le bas est bloqué
+            }
+
+            // si le type de la case à gauche est full
+            if ("full".equals(squares[i][j - 1].getItemType())) {
+                leftBlocked = true; // la gauche est bloquée
+            }
+
+            // si le type de la case à droite est full
+            if ("full".equals(squares[i][j + 1].getItemType())) {
+                rightBlocked = true; // la droite est bloqué
+            }
+        }
+    }
+
+    /**
+     * Méthode permettant de changer l'image du pacman 
+     * On change l'image 1 fois sur 2 avec le booléen
      * @param pacmanSpriteName = le nom du fichier selon la direction
      */
     private void changePacmanSprite(String pacmanSpriteName) {
 
-        if (isPacmanFull) {
+        if (!isPacmanFull) {
             changeSprite("Avance/pacmanfull");
-            isPacmanFull = false;
+            isPacmanFull = true;
         } else {
             changeSprite(pacmanSpriteName);
-            isPacmanFull = true;
+            isPacmanFull = false;
         }
     }
 
     /**
      * Appelée lorqu'il faut changer de côté sur la map (doite ou gauche)
-     *
      * @param direction = la direction du pacman
      */
     private void crossTheMap(String direction) {
@@ -212,10 +233,10 @@ public class Player extends BoxGameItem implements KeyListener {
 
         if ("left".equals(direction)) {   // il passe de gauche à droite
             j = 24;                       // la case sur laquelle il va repartir
-            this.getPosition().setX(672); // 24 * 28
+            this.getPosition().setX(672); // on fixe la nouvelle position (24 * 28)
         } else {                          // il passe de droite à gauche
             j = 0;                        // la case sur laquelle il va repartir
-            this.getPosition().setX(0);   // 0 * 28
+            this.getPosition().setX(0);   // on fixe la nouvelle position (0 * 28)
         }
     }
 
@@ -226,18 +247,18 @@ public class Player extends BoxGameItem implements KeyListener {
         // on remplace la case par une case vide
         this.squares[i][j].changeSprite("Squares/empty");
 
+        // on regarde quel type était la case
         switch (squares[i][j].getItemType()) {
-            case "emptyWithPoint":
-                this.squares[i][j].setItemType("empty");
-                // on incrémente le score de 10 car il a mangé un point
-                this.score += 10;
+            case "emptyWithPoint": // case avec petit point
+                this.score += 10; // on incrémente le score de 10
                 break;
-            case "emptyWithBigPoint":
-                this.squares[i][j].setItemType("empty");
-                // on incrémente le score de 50 car il a mangé un gros point
-                this.score += 50;
+            case "emptyWithBigPoint": // case avec gros point
+                this.score += 50; // on incrémente le score de 50
                 break;
         }
+        
+        // on fixe le type de la nouvelle case à vide
+        this.squares[i][j].setItemType("empty");
 
         // on met à jour le score
         this.objScore.setScore(score);
@@ -261,7 +282,6 @@ public class Player extends BoxGameItem implements KeyListener {
     public void keyReleased(KeyEvent e) {
 
         // suivant la flèche du clavier appuyée, on change la direction
-        // et l'image correspondante
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 direction = "left";

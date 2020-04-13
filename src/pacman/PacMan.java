@@ -1,6 +1,7 @@
 
 package pacman;
 
+import ghosts.Clyde;
 import stats.Life;
 import stats.Score;
 import iut.Game;
@@ -21,10 +22,7 @@ public class PacMan extends Game {
         
         // création de la map
         map = new Map(jeu);
-        
-        // affichage de la map dans la console (affichage de test)
-        // System.out.println(map);
-        
+          
         jeu.play();
     }
     
@@ -32,7 +30,14 @@ public class PacMan extends Game {
         super(700,560,"Pac-man");
     }
     
+    /**
+     * Attribut représentant le joueur (il est représenté par pacman)
+     */
     private Player player;
+    
+    /**
+     * Attribut représentant la map du jeu
+     */
     private static Map map; 
     
     @Override
@@ -58,6 +63,11 @@ public class PacMan extends Game {
         Life labelLife = new Life(this, "Lives/labelLives", 10, 540);
         this.addItem(labelLife);
         
+        // création du fantôme orange
+        // (position de départ sur les cases (x=8, y=13) = (8 * 28, 13 * 28) en pixels)
+        Clyde clyde = new Clyde(this, 364, 224);
+        this.addItem(clyde);
+        clyde.setSquares(map.getSquares());        
     }
 
     @Override
