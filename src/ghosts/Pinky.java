@@ -1,7 +1,7 @@
 
 package ghosts;
 
-import iut.Game;
+import pacman.PacMan;
 
 /**
  * Pinky est le fantôme rose
@@ -11,9 +11,12 @@ import iut.Game;
  */
 public class Pinky extends Ghost {
 
-    public Pinky(Game g) {
-        super(g, "", 0, 0);
+    public Pinky(PacMan game) {
+        super(game, "", 0, 0);
     }
-    
-    
+
+    @Override
+    public void die() {}
+
+ 
 }

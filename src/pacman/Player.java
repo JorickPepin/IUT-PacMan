@@ -1,5 +1,6 @@
 package pacman;
 
+import ghosts.Ghost;
 import stats.Score;
 import stats.Life;
 import iut.BoxGameItem;
@@ -66,6 +67,8 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private final Life objLife;
 
+    private int lives = 2;
+    
     /**
      * Attribut permettant de récupérer une instance de score et le fixer
      * suivant le score du joueur
@@ -78,42 +81,48 @@ public class Player extends BoxGameItem implements KeyListener {
      * dans l'affichage
      */
     private int score = 0;
-
+    
     /**
      * Constance représentant la vitesse de pacman
      * /!\ plus la valeur est grande, moins la vitesse est élevée
      */
     private static final int SPEED = 10;
     
+    private final PacMan game;
+
+    private boolean isCollideWithVulnerableGhost = false;
     /**
      * Constructeur du joueur
-     * @param g = le jeu
+     * @param pacman
      * @param x = position de départ en abscisse
      * @param y = position de départ en ordonnée
      */
-    public Player(Game g, int x, int y) {
-        super(g, "Avance/pacmanright", x, y);
+    public Player(PacMan pacman, int x, int y) {
+        super(pacman, "Avance/pacmanright", x, y);
 
         // voir attributs pour explication
         this.i = y / 28;
         this.j = x / 28;
 
+        this.game = pacman;
+        
         // au départ, on a 2 vies
-        this.objLife = new Life(g, "Lives/2", 58, 540);
-        g.addItem(this.objLife);
+        this.objLife = new Life(pacman, "Lives/2", 58, 540);
+        game.addItem(this.objLife);
 
         // initialisation d'un object Score 
-        this.objScore = new Score(g, "Score/0", 0, 0);
+        this.objScore = new Score(pacman, "Score/0", 0, 0);
     }
 
     @Override
     public void evolve(long l) {
         
+            
         // si pacman passe sur une case contenant un petit point ou un gros, 
         // alors on change la case et on incrémente le score
         if (("emptyWithPoint".equals(squares[i][j].getItemType()))
                 || ("emptyWithBigPoint".equals(squares[i][j].getItemType()))) {
-            changeSquare();
+            changeSquare(); 
         }
 
         // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
@@ -254,9 +263,13 @@ public class Player extends BoxGameItem implements KeyListener {
                 break;
             case "emptyWithBigPoint": // case avec gros point
                 this.score += 50; // on incrémente le score de 50
+                game.getGhostsList().forEach((g) -> {
+                    g.becomeVulnerable(true); // les fantômes deviennent vulnérables
+
+                });
                 break;
         }
-        
+         
         // on fixe le type de la nouvelle case à vide
         this.squares[i][j].setItemType("empty");
 
@@ -264,61 +277,87 @@ public class Player extends BoxGameItem implements KeyListener {
         this.objScore.setScore(score);
     }
 
-    // Amélioration :
-    // faire en sorte que le déplacement soit le même que dans la version originale
-    // càd ne pouvoir changer de direction que si celle-ci ne contient pas une case pleine
-    // actuellement : possibilité de se bloquer contre une paroi volontairement ou non
-    
-    /**
-     * On utilise keyReleased et pas keyPressed car si l'utilisateur reste
-     * appuyé sur une flèche lorsqu'il est bloqué, les tests ne vont plus être
-     * vrais au bout d'un moment (keyPressed sûrement répété + de fois que
-     * evolve) et le pacman va avancer dans les cases pleines (seule solution
-     * trouvée pour l'instant)
-     *
-     * @param e
-     */
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-        // suivant la flèche du clavier appuyée, on change la direction
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                direction = "left";
-                break;
-            case KeyEvent.VK_RIGHT:
-                direction = "right";
-                break;
-            case KeyEvent.VK_UP:
-                direction = "up";
-                break;
-            case KeyEvent.VK_DOWN:
-                direction = "down";
-                break;
-        }
-    }
-
     public void setSquares(Square[][] squares) {
         this.squares = squares;
     }
 
-    @Override
-    public boolean isCollide(GameItem gi) {
-        return false;
-    }
+   
 
     @Override
     public void collideEffect(GameItem gi) {
+        
+        if (count % SPEED == 0) {
+            
+            // si la collision a lieu avec un fantôme
+            if (gi.getItemType().equals("ghost")) {
+                
+                for(Ghost g : game.getGhostsList()) {
+                    
+                    if (g.isVulnerable()) { // si le fantôme est vulnérable
+                        this.isCollideWithVulnerableGhost = true;
+                        collideWithVulnerableGhost(g);
+                     } 
+                    
+//else if (this.lives >= 0 ){ // si le fantôme n'est pas vulnérable et que l'utilisateur a encore des vies
+//                        this.lives --;           // on lui enlève une vie      
+//                        switch (this.lives) {
+//                            case 1:                 
+//                                this.objLife.changeSprite("Lives/1");
+//                                break;
+//                            case 0:
+//                                game.remove(this.objLife);
+//                                break;
+//                        }
+//                        
+//                    } else {                               
+////                        game.lost(); // le joueur est mort
+//                    }
+                }
+            }
+        }
     }
 
+    private void collideWithVulnerableGhost(Ghost g) {
+        if (this.isCollideWithVulnerableGhost) {
+            g.die();
+            this.score += 200;
+            this.objScore.setScore(score);
+            this.isCollideWithVulnerableGhost = false;
+        }
+    }
+    
     @Override
     public void keyPressed(KeyEvent e) {
+                
+        // on vérifie si les cases aux alentours sont bloquées
+        sideBlocked();
+        
+        // suivant la flèche du clavier appuyée, on change la direction si
+        // celle-ci n'est pas bloquée (on évite ainsi de se bloquer contre un mur)
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
+                if (!leftBlocked)
+                    direction = "left";
+                break;
+            case KeyEvent.VK_RIGHT:
+                if (!rightBlocked)
+                    direction = "right";
+                break;
+            case KeyEvent.VK_UP:
+                if (!upBlocked)
+                    direction = "up";
+                break;
+            case KeyEvent.VK_DOWN:
+                if (!downBlocked)
+                    direction = "down";
+                break;
+        }
     }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
+    
+    @Override public boolean isCollide(GameItem gi) { return false; }
+    @Override public void keyTyped(KeyEvent e) {}
+    @Override public void keyReleased(KeyEvent e) {}
+    
     @Override
     public String getItemType() {
         return "player";

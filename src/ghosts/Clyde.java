@@ -1,8 +1,9 @@
 package ghosts;
 
-import iut.Game;
 import java.util.ArrayList;
 import java.util.Random;
+import pacman.Map;
+import pacman.PacMan;
 import square.Square;
 
 /**
@@ -13,7 +14,7 @@ import square.Square;
  * @author Jorick
  */
 public class Clyde extends Ghost {
-
+ 
     // Coordonnées du fantôme (sur quelle case il est)
     // initialisées à (8,13) dans le constructeur, c'est la position 
     // du fantôme au démarrage. Elle est définie dans le main
@@ -49,23 +50,32 @@ public class Clyde extends Ghost {
      */
     private static byte count = 0;
   
+    private static int temp = 0;
     /**
      * Constance représentant la vitesse du fantôme
      * /!\ plus la valeur est grande, moins la vitesse est élevée
      */
-    private static final int SPEED = 10;
+    private static final int SPEED = 10; //10
     
-    public Clyde(Game g, int x, int y) {
-        super(g, "Ghosts/clydeDown", x, y);
-
+    private final PacMan game;
+    private final Map map;
+    
+    public Clyde(PacMan game, Map map) {
+        super(game, "Ghosts/clydeUp", 364, 224);
         // voir attributs pour explication
-        this.i = y / 28;
-        this.j = x / 28;
+        this.i = 8; // 224 / 28
+        this.j = 13; // 364 / 28
+        
+        this.game = game;
+        this.map = map;
+        this.squares = map.getSquares();
+        
+        game.addItem(this);
     }
 
     @Override
     public void evolve(long l) {
-
+        
         // si le fantôme est sur la case à l'extrême gauche ou à l'extrême droite
         // il faut le déplacer de l'autre côté
         if (this.i == 9 && (this.j == 0 || this.j == 24)) {
@@ -74,34 +84,71 @@ public class Clyde extends Ghost {
             
         // test permettant de limiter le nombre de répétition pour limiter la vitesse
         if (count % SPEED == 0) {
-         
+            
             // on regarde si les cases autour du perso sont pleines 
             sideBlocked();
             
             // on définit la direction dans laquelle il doit se diriger
-            direction = defineDirection(); 
-        
+            direction = defineDirection();
+            
+            // si le fantôme est vulnérable
+            if(this.isVulnerable()) {
+                // si le compteur est supérieur à 30, on fait clignoter 
+                // le fantôme pour avertir le joueur que c'est bientôt fini
+                if(temp > 30) { 
+                    this.changeSpriteVulnerableGhost();
+                }           
+                // si le compteur est égal à 40 (~ 10sec), le fantôme
+                // n'est plus vulnérable
+                if(temp == 40) {
+                    this.becomeVulnerable(false);
+                    temp = 0;
+                }
+                temp ++; 
+            }
+            
+            if(this.isDie()) {
+                game.removeGhost(this);
+                game.remove(this);
+                Clyde clyde = new Clyde(game, map);                
+                
+//                game.addGhost(clyde);
+//                System.out.println("mort : "+clyde.isDie());
+//                System.out.println("vulnérable : "+clyde.isVulnerable());
+
+            }
+            
+            
+
             // selon la direction, on change le sprite et on le fait avancer
             switch (direction) {
                 case "left":
-                    changeSprite("Ghosts/clydeLeft");
-                        this.moveXY(-28, 0); // une case vers la gauche
-                        this.j -= 1;
+                    if (!this.isVulnerable()) {
+                        changeSprite("Ghosts/clydeLeft");
+                    }
+                    this.moveXY(-28, 0); // une case vers la gauche
+                    this.j -= 1;
                     break;
                 case "right":
-                    changeSprite("Ghosts/clydeRight");
-                        this.moveXY(28, 0); // une case vers la droite
-                        this.j += 1;
+                    if (!this.isVulnerable()) {
+                        changeSprite("Ghosts/clydeRight");
+                    }
+                    this.moveXY(28, 0); // une case vers la droite
+                    this.j += 1;
                     break;
                 case "up":
-                    changeSprite("Ghosts/clydeUp");
-                        this.moveXY(0, -28); // une case vers le haut
-                        this.i -= 1;
+                    if (!this.isVulnerable()) {
+                        changeSprite("Ghosts/clydeUp");
+                    }
+                    this.moveXY(0, -28); // une case vers le haut
+                    this.i -= 1;
                     break;
                 case "down":
-                    changeSprite("Ghosts/clydeDown");
-                        this.moveXY(0, 28); // une case vers le bas
-                        this.i += 1;
+                    if (!this.isVulnerable()) {
+                        changeSprite("Ghosts/clydeDown");
+                    }
+                    this.moveXY(0, 28); // une case vers le bas
+                    this.i += 1;
                     break;
             }
 
@@ -110,7 +157,6 @@ public class Clyde extends Ghost {
             rightBlocked = false;
             upBlocked = false;
         }
-        
         count++;
     }
 
@@ -119,13 +165,12 @@ public class Clyde extends Ghost {
      * @return la direction dans laquelle il doit se diriger
      */
     private String defineDirection() {
-
+        
         // variable représentant le nombre de directions possibles
         int nbOfDirections = 0;
         
         // liste contenant les directions possibles
         ArrayList<String> directionList = new ArrayList();
-        
         // on effectue des doubles tests pour éviter que le fantôme ne fasse
         // des demi-tours intempestifs
         
@@ -196,7 +241,7 @@ public class Clyde extends Ghost {
             }
         }
     }
-
+ 
     /**
      * Appelée lorqu'il faut changer de côté sur la map (doite ou gauche)
      * @param direction = la direction du pacman
@@ -216,7 +261,7 @@ public class Clyde extends Ghost {
             this.getPosition().setX(0);   // 0 * 28
         }
     }
-    
+
     public void setSquares(Square[][] squares) {
         this.squares = squares;
     }

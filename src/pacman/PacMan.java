@@ -2,6 +2,7 @@
 package pacman;
 
 import ghosts.Clyde;
+import ghosts.Ghost;
 import stats.Life;
 import stats.Score;
 import iut.Game;
@@ -9,6 +10,8 @@ import iut.Vector;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,7 +26,7 @@ public class PacMan extends Game {
         // création de la map
         map = new Map(jeu);
           
-        jeu.play();
+        jeu.play();      
     }
     
     public PacMan() {
@@ -39,6 +42,8 @@ public class PacMan extends Game {
      * Attribut représentant la map du jeu
      */
     private static Map map; 
+    
+    private final ArrayList<Ghost> ghostsList = new ArrayList();
     
     @Override
     protected void drawBackground(Graphics g) {
@@ -65,13 +70,14 @@ public class PacMan extends Game {
         
         // création du fantôme orange
         // (position de départ sur les cases (x=8, y=13) = (8 * 28, 13 * 28) en pixels)
-        Clyde clyde = new Clyde(this, 364, 224);
-        this.addItem(clyde);
-        clyde.setSquares(map.getSquares());        
+        Clyde clyde = new Clyde(this, map); 
+        addGhost(clyde);
     }
 
     @Override
-    protected void lost() {}
+    protected void lost() {
+        JOptionPane.showMessageDialog(this, "Vous avez perdu");
+    }
 
     @Override
     protected void win() {}
@@ -96,4 +102,18 @@ public class PacMan extends Game {
 
     // gravité non utilisée dans ce jeu
     @Override public Vector getGravity() {return new Vector();}
+    
+    public void addGhost(Ghost ghost) {
+        this.ghostsList.add(ghost); 
+    }
+
+    public void removeGhost(Ghost ghost) {
+        this.ghostsList.remove(ghost);
+    }
+    
+    public ArrayList<Ghost> getGhostsList() {
+        return ghostsList;
+    }
+    
+    
 }

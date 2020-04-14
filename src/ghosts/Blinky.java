@@ -1,7 +1,7 @@
  
 package ghosts;
 
-import iut.Game;
+import pacman.PacMan;
 
 /**
  * Blinky est le fantôme bleu
@@ -10,10 +10,13 @@ import iut.Game;
  * @author Jorick
  */
 public class Blinky extends Ghost {
-
-    public Blinky(Game g, int x, int y) {
-        super(g, "Ghost/blinkyRight", x, y);
+   
+    public Blinky(PacMan game, int x, int y) {
+        super(game, "Ghost/blinkyRight", x, y);
     }
-    
-    
+
+    @Override
+    public void die() {}
+
+ 
 }

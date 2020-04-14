@@ -1,10 +1,12 @@
 
 package pacman;
 
+import ghosts.Ghost;
 import iut.Game;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import square.Square;
 import java.util.List;
 import square.EmptySquare;
@@ -31,6 +33,8 @@ public class Map {
      */ 
     private final int NB_COLS = 25;
     
+    private ArrayList<Ghost> ghostsList = new ArrayList();
+        
     /**
      * Constructeur de la map
      * @param g = le jeu
@@ -204,5 +208,11 @@ public class Map {
         return squares;
     }
     
-    
+    public void addGhost(Ghost ghost) {
+        this.ghostsList.add(ghost); 
+    }
+
+    public ArrayList<Ghost> getGhostsList() {
+        return ghostsList;
+    }
 }

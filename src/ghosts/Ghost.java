@@ -2,8 +2,8 @@
 package ghosts;
 
 import iut.BoxGameItem;
-import iut.Game;
 import iut.GameItem;
+import pacman.PacMan;
 
 /**
  * Classe abstraite représentant un fantôme
@@ -11,9 +11,19 @@ import iut.GameItem;
  * @author Jorick
  */
 public abstract class Ghost extends BoxGameItem {
-
-    public Ghost(Game g, String name, int x, int y) {
-        super(g, name, x, y);
+    
+    private boolean isVulnerable = false;
+    
+    private boolean isVulnerableGhostBlue = true;
+    
+    private boolean isDie = false;
+    
+    private final PacMan game;
+    
+    public Ghost(PacMan game, String name, int x, int y) {
+        super(game, name, x, y); 
+        
+        this.game = game;
     }
     
     @Override
@@ -21,10 +31,40 @@ public abstract class Ghost extends BoxGameItem {
 
     @Override
     public String getItemType() {
-        return "";
+        return "ghost";
     }
  
     @Override
     public void evolve(long l) {}
     
+    public void becomeVulnerable(boolean vulnerable) {
+        this.isVulnerable = vulnerable; 
+        this.changeSprite("Ghosts/dangerBlue");
+    }
+    
+    public boolean isVulnerable() {
+        return this.isVulnerable;
+    }
+    
+    public void changeSpriteVulnerableGhost() {
+        if (!isVulnerableGhostBlue) {
+            changeSprite("Ghosts/dangerBlue");
+            this.isVulnerableGhostBlue = true;
+        } else {
+            super.changeSprite("Ghosts/dangerWhite");
+            isVulnerableGhostBlue = false;
+        }
+    }
+    
+    public void die() {
+        this.isDie = true;
+    }
+    
+    public void live() {
+        this.isDie = false;
+    }
+    
+    public boolean isDie() {
+        return this.isDie;
+    }
 }
