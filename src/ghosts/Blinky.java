@@ -12,7 +12,7 @@ import pacman.PacMan;
 public class Blinky extends Ghost {
    
     public Blinky(PacMan game, int x, int y) {
-        super(game, "Ghost/blinkyRight", x, y);
+        super(game, "images/Ghost/blinkyRight", x, y);
     }
 
     @Override

@@ -13,7 +13,9 @@ import square.EmptySquare;
 import square.FullSquare;
 
 /**
- *
+ * Classe représentant la map
+ * La map est un tableau à deux dimensions composé de cases de 28 pixels
+ * de côté
  * @author Jorick
  */
 public class Map {
@@ -62,13 +64,13 @@ public class Map {
                         // si le caractère est 2, alors la case est vide sans point
                         squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].setItemType("empty");
-                        squares[i][j].changeSprite("Squares/empty");
+                        squares[i][j].changeSprite("images/Squares/empty");
                         break;
                     case '3':
                         // si le caractère est 3, alors la case est vide avec un gros point
                         squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].setItemType("emptyWithBigPoint");
-                        squares[i][j].changeSprite("Squares/emptyWithBigPoint");
+                        squares[i][j].changeSprite("images/Squares/emptyWithBigPoint");
                         break;
                         
                     // tous les caractères suivants n'ont pas de lien avec la case qu'ils créent
@@ -80,115 +82,115 @@ public class Map {
                         
                     case 'a':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullSideTop");
+                        squares[i][j].changeSprite("images/Squares/fullSideTop");
                         break;
                     case 'b':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullSideLeft");
+                        squares[i][j].changeSprite("images/Squares/fullSideLeft");
                         break;
                     case 'c':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullSideBottom");
+                        squares[i][j].changeSprite("images/Squares/fullSideBottom");
                         break;
                     case 'd':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullSideRight");
+                        squares[i][j].changeSprite("images/Squares/fullSideRight");
                         break;
                     case 'e':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleTopRight");
+                        squares[i][j].changeSprite("images/Squares/fullAngleTopRight");
                         break;
                     case 'f':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleTopLeft");
+                        squares[i][j].changeSprite("images/Squares/fullAngleTopLeft");
                         break;
                     case 'g':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleBottomLeft");
+                        squares[i][j].changeSprite("images/Squares/fullAngleBottomLeft");
                         break;
                     case 'h':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleBottomRight");
+                        squares[i][j].changeSprite("images/Squares/fullAngleBottomRight");
                         break;
                     case 'i':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleTopRight2");
+                        squares[i][j].changeSprite("images/Squares/fullAngleTopRight2");
                         break;
                     case 'j':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleTopLeft2");
+                        squares[i][j].changeSprite("images/Squares/fullAngleTopLeft2");
                         break;
                     case 'k':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleBottomLeft2");
+                        squares[i][j].changeSprite("images/Squares/fullAngleBottomLeft2");
                         break;
                     case 'l':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullAngleBottomRight2");
+                        squares[i][j].changeSprite("images/Squares/fullAngleBottomRight2");
                         break;
                     case 'm':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin1");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin1");
                         break;
                     case 'n':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin2");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin2");
                         break;
                     case 'o':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleLines");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleLines");
                         break;
                     case 'p':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin3");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin3");
                         break;
                     case 'q':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin4");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin4");
                         break;
                     case 'r':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin5");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin5");
                         break;
                     case 's':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin6");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin6");
                         break;
                     case 't':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleLines2");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleLines2");
                         break;
                     case 'u':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullEnd1");
+                        squares[i][j].changeSprite("images/Squares/fullEnd1");
                         break;
                     case 'v':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullEnd2");
+                        squares[i][j].changeSprite("images/Squares/fullEnd2");
                         break;
                     case 'w':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullEnd3");
+                        squares[i][j].changeSprite("images/Squares/fullEnd3");
                         break;
                     case 'x':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleDifferentAngles1");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleDifferentAngles1");
                         break;
                     case 'y':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleDifferentAngles2");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleDifferentAngles2");
                         break;
                     case 'z':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullSeparationGhosts");
+                        squares[i][j].changeSprite("images/Squares/fullSeparationGhosts");
                         break;
                     case '-':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin7");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin7");
                         break;
                     case '_':
                         squares[i][j] = new FullSquare(g, i, j);
-                        squares[i][j].changeSprite("Squares/fullDoubleJoin8");
+                        squares[i][j].changeSprite("images/Squares/fullDoubleJoin8");
                         break;
                     default:
                         // si le caractère est 0, alors la case est vide avec un petit point (cas général par défaut)

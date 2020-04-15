@@ -1,9 +1,9 @@
 
 package stats;
 
-import iut.Game;
 import iut.GameItem;
 import static java.lang.String.valueOf;
+import pacman.PacMan;
 
 /**
  *
@@ -11,8 +11,15 @@ import static java.lang.String.valueOf;
  */
 public class Score extends GameItem {
 
-    private final Game g;
+    private final PacMan game;
 
+    /**
+     * Compteur pour limiter la vitesse dans le evolve on utilise un byte car
+     * codé sur 8 bits => modulo calculé sur des plus petites valeurs qu'avec un
+     * int (complexité améliorée ?)
+     */
+    private static byte count = 0;
+    
     /**
      * Tableau de String contenant les noms des fichiers images représentant 
      * les chiffres afin d'afficher le score
@@ -26,25 +33,50 @@ public class Score extends GameItem {
      */
     private Score[] listScoreItems;
     
-    public Score(Game g, String name, int x, int y) {
+    /**
+     * Ce tableau contient les éléments à afficher pour le delta (combien le 
+     * joueur à marquer de points (ex : +10 pour un point normal)
+     */
+    private Score[] listDeltaItems;
+    
+    /**
+     * Attribut représentant le score total du joueur
+     */
+    private int score;
+    
+    public Score(PacMan g, String name, int x, int y) {
         super(g, name, x, y);
-        this.g = g;
+        this.game = g;
         
         // ce test permet de remplir le tableau avec le nom des fichiers qu'une
         // seule fois (quand on ajoute le label du score)
-        if ("Score/labelScore".equals(name)) {
+        if ("images/Score/labelScore".equals(name)) {
             fillFilesNames();
         }
         
-        // initialisation de la liste
-        this.listScoreItems = new Score[1];
+        // initialisation des listes
+        this.listScoreItems = new Score[0];
+        this.listDeltaItems = new Score[0];
     }
     
     /**
      * Méthode permettant de mettre à jour le score en haut à gauche
-     * @param score = le score du joueur
+     * et d'appeler la méthode permettant d'afficher le nombre de points qu'a
+     * gagnés le joueur à côté de lui (d'où les paramètres)
+     * @param nbPoints = le nombre de points qu'a marqués le joueur
+     * @param i = la position du joueur
+     * @param j = la position du joueur
+     * @param direction = la direction du joueur
      */
-    public void setScore(int score) {
+    public void addPoints(int nbPoints, int i, int j, String direction) {
+        
+        // on enlève le +[nbPoints] à côté du joueur
+        cleanDeltaItemsList();
+                
+        // le score vaut le score actuel + le nombre de points obtenus lors
+        // de la dernière action
+        this.score += nbPoints;
+        
         // variable représentant l'abscisse des caractères 
         int x = 63;
         
@@ -67,14 +99,18 @@ public class Score extends GameItem {
             // dans notre liste, on ajoute le nouveau chiffre
             // c - '0' pour récupérer la valeur entière du caractère (ex : '9' - '0' = 9)
             // pour c=9, on ajoute le sprite filesNames[9] càd Score/9
-            listScoreItems[scoreItem] = new Score(g, filesNames[c - '0'], x, 8);
-            g.addItem(listScoreItems[scoreItem]);
+            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 8);
+            game.addItem(listScoreItems[scoreItem]);
 
             // on incrémente l'abscisse pour que le chiffre d'après soit décalé
             x += 8;
             
             scoreItem++;
         }
+        
+        // on appelle la méthode permettant d'afficher combien de points
+        // a obtenu le joueur avec sa dernière action effectuée
+        displayTheDelta(nbPoints, i, j, direction);
     }
 
     /**
@@ -88,14 +124,14 @@ public class Score extends GameItem {
 
         // pour i allant de 0 à 9, on ajoute i au préfixe Score/ (Score/[i])
         for (int i = 0; i < 10; i++) {
-            String fileName = "Score/";
+            String fileName = "images/Score/";
             fileName += valueOf(i);
 
             // ex : filesNames[2] = "Score/2";
             filesNames[i] = fileName;
         }
     }
-
+ 
     /**
      * Méthode permettant d'enlever le score existant en haut à gauche pour
      * mettre le nouveau
@@ -103,7 +139,86 @@ public class Score extends GameItem {
     private void cleanScoreItemsList() {
         
         for (Score ScoreItem : this.listScoreItems) {
-            g.remove(ScoreItem);
+            game.remove(ScoreItem);
+        }
+    }
+    
+    /**
+     * Méthode permettant d'enlever le +[nbPoints] à côté du joueur
+     */
+    public void cleanDeltaItemsList() {
+        
+        for (Score ScoreItem : this.listDeltaItems) {
+            game.remove(ScoreItem);
+        }
+    }
+        
+    /**
+     * Méthode permettant d'afficher le delta, c'est à dire la différence entre 
+     * le nouveau score et le score d'avant (combien il a marqué de points)
+     * @param nbPoints = le nombre de points qu'il a gagnés (variant selon l'action effectuée
+     * @param i = la position du joueur
+     * @param j = la position du joueur
+     * @param direction = la direction du joueur
+     */
+    private void displayTheDelta(int nbPoints, int i, int j, String direction) {
+        
+        // ces variables vont permettre d'afficher le nombre de points gagnés 
+        // en fonction de i et j
+        int x = 0, y = 0;
+        
+        // selon la direction du joueur, on affiche pas le delta au même endroit
+        switch(direction) {        
+            case"left":
+                x = (j+1) * 28; // le joueur va sur la gauche donc on l'affiche à sa droite (+1 en abscisse)
+                y = i * 28;
+                break;
+            case"right":
+                x = (j-1) * 28; // le joueur va sur la droite donc on l'affiche à sa gauche (-1 en abscisse)
+                y = i * 28;
+                break;
+            case"up":
+                x = j * 28; 
+                y = (i+1) * 28; // le joueur va en haut donc on l'affiche en-dessous (+1 en ordonnée)
+                break;
+            case"down":
+                x = j * 28;
+                y = (i-1) * 28; // le joueur va en bas donc on l'affiche au-dessus (-1 en ordonnée)
+                break;
+        }
+        
+        // variable permettant de décaler les chiffres sur la droite en abscisse pour ne pas qu'ils se superposent
+        int decale = 0;
+        
+        // même principe que pour le score, on transforme l'entier en String pour récupérer chaque caractère
+        String s = valueOf(nbPoints);
+        
+        // liste avec les chiffres du delta à afficher avec un élément en plus (d'où le +1) qui est le signe "+"
+        listDeltaItems = new Score[s.length()+1];
+        
+        // variable représentant l'index des éléments du tableau listDeltaItems
+        int deltaItems = 0;
+        
+        // on affiche le signe "+"
+        listDeltaItems[deltaItems] = new Score(game, "images/Score/+", x, y);
+        game.addItem(listDeltaItems[deltaItems]);
+        
+        // on incrémente pour placer le prochaine élément à la suite dans le tableau et pas à la place
+        deltaItems ++;
+        
+        // on décale le prochain élément de 8 pixels sur la droite pour éviter la superposition
+        decale+=8;
+        
+        // pour chaque chiffre, on l'ajoute dans la liste des éléments et on l'affiche
+        for(char c : s.toCharArray()) {
+            listDeltaItems[deltaItems] = new Score(game, filesNames[c - '0'], x+decale, y);
+            game.addItem(listDeltaItems[deltaItems]);
+
+            // on incrémente l'abscisse pour que le chiffre d'après soit décalé
+            decale += 8;
+            
+            // on décale le prochain élément de 8 pixels sur la droite pour éviter la superposition
+            deltaItems++;
         }
     }
     
@@ -114,5 +229,9 @@ public class Score extends GameItem {
     @Override
     public String getItemType() {
         return "score";
+    }
+
+    public int getScore() {
+        return score;
     }
 }

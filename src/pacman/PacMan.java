@@ -19,14 +19,15 @@ import javax.swing.JOptionPane;
  */
 public class PacMan extends Game {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         
-        PacMan jeu = new PacMan();
+        // création du jeu
+        game = new PacMan();
         
         // création de la map
-        map = new Map(jeu);
-          
-        jeu.play();      
+        map = new Map(game);
+        
+        game.play();  
     }
     
     public PacMan() {
@@ -45,6 +46,10 @@ public class PacMan extends Game {
     
     private final ArrayList<Ghost> ghostsList = new ArrayList();
     
+    private static PacMan game;
+    
+//    private boolean enterIsPressed = false;
+    
     @Override
     protected void drawBackground(Graphics g) {
         g.setColor(Color.BLACK);
@@ -53,24 +58,24 @@ public class PacMan extends Game {
 
     @Override
     protected void createItems() {
-        
+
         // création du joueur 
-        // (position de départ sur les cases (x=2, y=9) = (2 * 28, 9 * 28) en pixels)
-        player = new Player(this,56,252);
-        this.addItem(player); 
+        // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
+        player = new Player(this, 336, 392);
+        this.addItem(player);
         player.setSquares(map.getSquares());
-        
+
         // ajout du label de score
-        Score labelScore = new Score(this, "Score/labelScore", 10, 8);
+        Score labelScore = new Score(this, "images/Score/labelScore", 10, 8);
         this.addItem(labelScore);
-        
+
         // ajout du label du nombre de vies
-        Life labelLife = new Life(this, "Lives/labelLives", 10, 540);
+        Life labelLife = new Life(this, "images/Lives/labelLives", 10, 540);
         this.addItem(labelLife);
-        
+
         // création du fantôme orange
         // (position de départ sur les cases (x=8, y=13) = (8 * 28, 13 * 28) en pixels)
-        Clyde clyde = new Clyde(this, map); 
+        Clyde clyde = new Clyde(this, map);
         addGhost(clyde);
     }
 
@@ -113,7 +118,5 @@ public class PacMan extends Game {
     
     public ArrayList<Ghost> getGhostsList() {
         return ghostsList;
-    }
-    
-    
+    } 
 }

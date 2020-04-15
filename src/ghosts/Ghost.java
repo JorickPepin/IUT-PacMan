@@ -39,7 +39,7 @@ public abstract class Ghost extends BoxGameItem {
     
     public void becomeVulnerable(boolean vulnerable) {
         this.isVulnerable = vulnerable; 
-        this.changeSprite("Ghosts/dangerBlue");
+        this.changeSprite("images/Ghosts/dangerBlue");
     }
     
     public boolean isVulnerable() {
@@ -48,10 +48,10 @@ public abstract class Ghost extends BoxGameItem {
     
     public void changeSpriteVulnerableGhost() {
         if (!isVulnerableGhostBlue) {
-            changeSprite("Ghosts/dangerBlue");
+            changeSprite("images/Ghosts/dangerBlue");
             this.isVulnerableGhostBlue = true;
         } else {
-            super.changeSprite("Ghosts/dangerWhite");
+            super.changeSprite("images/Ghosts/dangerWhite");
             isVulnerableGhostBlue = false;
         }
     }

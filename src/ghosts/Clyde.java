@@ -61,7 +61,7 @@ public class Clyde extends Ghost {
     private final Map map;
     
     public Clyde(PacMan game, Map map) {
-        super(game, "Ghosts/clydeUp", 364, 224);
+        super(game, "images/Ghosts/clydeUp", 364, 224);
         // voir attributs pour explication
         this.i = 8; // 224 / 28
         this.j = 13; // 364 / 28
@@ -124,28 +124,28 @@ public class Clyde extends Ghost {
             switch (direction) {
                 case "left":
                     if (!this.isVulnerable()) {
-                        changeSprite("Ghosts/clydeLeft");
+                        changeSprite("images/Ghosts/clydeLeft");
                     }
                     this.moveXY(-28, 0); // une case vers la gauche
                     this.j -= 1;
                     break;
                 case "right":
                     if (!this.isVulnerable()) {
-                        changeSprite("Ghosts/clydeRight");
+                        changeSprite("images/Ghosts/clydeRight");
                     }
                     this.moveXY(28, 0); // une case vers la droite
                     this.j += 1;
                     break;
                 case "up":
                     if (!this.isVulnerable()) {
-                        changeSprite("Ghosts/clydeUp");
+                        changeSprite("images/Ghosts/clydeUp");
                     }
                     this.moveXY(0, -28); // une case vers le haut
                     this.i -= 1;
                     break;
                 case "down":
                     if (!this.isVulnerable()) {
-                        changeSprite("Ghosts/clydeDown");
+                        changeSprite("images/Ghosts/clydeDown");
                     }
                     this.moveXY(0, 28); // une case vers le bas
                     this.i += 1;

@@ -30,7 +30,7 @@ public class EmptySquare extends Square {
     private boolean bigPointIsDiplayed = true;
     
     public EmptySquare(Game g, int i, int j) {
-        super(g, "Squares/emptyWithPoint", i, j);
+        super(g, "images/Squares/emptyWithPoint", i, j);
     }
 
     @Override
@@ -61,10 +61,10 @@ public class EmptySquare extends Square {
      */
     private void flickerBigPoint() {
         if (bigPointIsDiplayed) {
-            changeSprite("Squares/empty");
+            changeSprite("images/Squares/empty");
             this.bigPointIsDiplayed = false;
         } else {
-            changeSprite("Squares/emptyWithBigPoint");
+            changeSprite("images/Squares/emptyWithBigPoint");
             this.bigPointIsDiplayed = true;
         }
     }

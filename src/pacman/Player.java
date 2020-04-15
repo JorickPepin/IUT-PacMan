@@ -1,10 +1,10 @@
 package pacman;
 
 import ghosts.Ghost;
+import iut.Audio;
 import stats.Score;
 import stats.Life;
 import iut.BoxGameItem;
-import iut.Game;
 import iut.GameItem;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -76,13 +76,6 @@ public class Player extends BoxGameItem implements KeyListener {
     private final Score objScore;
     
     /**
-     * Variable représentant le score du jour
-     * Ce score est passé à l'instance de Score pour pouvoir être mis à jour
-     * dans l'affichage
-     */
-    private int score = 0;
-    
-    /**
      * Constance représentant la vitesse de pacman
      * /!\ plus la valeur est grande, moins la vitesse est élevée
      */
@@ -91,6 +84,7 @@ public class Player extends BoxGameItem implements KeyListener {
     private final PacMan game;
 
     private boolean isCollideWithVulnerableGhost = false;
+    
     /**
      * Constructeur du joueur
      * @param pacman
@@ -98,7 +92,7 @@ public class Player extends BoxGameItem implements KeyListener {
      * @param y = position de départ en ordonnée
      */
     public Player(PacMan pacman, int x, int y) {
-        super(pacman, "Avance/pacmanright", x, y);
+        super(pacman, "images/Avance/pacmanright", x, y);
 
         // voir attributs pour explication
         this.i = y / 28;
@@ -107,22 +101,21 @@ public class Player extends BoxGameItem implements KeyListener {
         this.game = pacman;
         
         // au départ, on a 2 vies
-        this.objLife = new Life(pacman, "Lives/2", 58, 540);
+        this.objLife = new Life(pacman, "images/Lives/2", 58, 540);
         game.addItem(this.objLife);
 
         // initialisation d'un object Score 
-        this.objScore = new Score(pacman, "Score/0", 0, 0);
+        this.objScore = new Score(pacman, "images/Score/0", 0, 0);
     }
 
     @Override
     public void evolve(long l) {
         
-            
         // si pacman passe sur une case contenant un petit point ou un gros, 
         // alors on change la case et on incrémente le score
         if (("emptyWithPoint".equals(squares[i][j].getItemType()))
                 || ("emptyWithBigPoint".equals(squares[i][j].getItemType()))) {
-            changeSquare(); 
+            changeSquare();
         }
 
         // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
@@ -130,37 +123,37 @@ public class Player extends BoxGameItem implements KeyListener {
         if (this.i == 9 && (this.j == 0 || this.j == 24)) {
             crossTheMap(direction);
         }
-            
+
         // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
         if (count % SPEED == 0) {
-            
+
             // on regarde si les cases autour du perso sont pleines
             sideBlocked();
 
             switch (direction) {
                 case "left":
-                    this.pacmanSpriteName = "Avance/pacmanleft";
+                    this.pacmanSpriteName = "images/Avance/pacmanleft";
                     if (!leftBlocked) {
                         this.moveXY(-28, 0); // une case vers la gauche
                         this.j -= 1;
                     }
                     break;
                 case "right":
-                    this.pacmanSpriteName = "Avance/pacmanright";
+                    this.pacmanSpriteName = "images/Avance/pacmanright";
                     if (!rightBlocked) {
                         this.moveXY(28, 0); // une case vers la droite
                         this.j += 1;
                     }
                     break;
                 case "up":
-                    this.pacmanSpriteName = "Avance/pacmanup";
+                    this.pacmanSpriteName = "images/Avance/pacmanup";
                     if (!upBlocked) {
                         this.moveXY(0, -28); // une case vers le haut
                         this.i -= 1;
                     }
                     break;
                 case "down":
-                    this.pacmanSpriteName = "Avance/pacmandown";
+                    this.pacmanSpriteName = "images/Avance/pacmandown";
                     if (!downBlocked) {
                         this.moveXY(0, 28); // une case vers le bas
                         this.i += 1;
@@ -176,6 +169,8 @@ public class Player extends BoxGameItem implements KeyListener {
 
             // on change l'image du pacman
             changePacmanSprite(pacmanSpriteName);
+
+            this.objScore.cleanDeltaItemsList();
         }
         count++;
     }
@@ -220,7 +215,7 @@ public class Player extends BoxGameItem implements KeyListener {
     private void changePacmanSprite(String pacmanSpriteName) {
 
         if (!isPacmanFull) {
-            changeSprite("Avance/pacmanfull");
+            changeSprite("images/Avance/pacmanfull");
             isPacmanFull = true;
         } else {
             changeSprite(pacmanSpriteName);
@@ -253,16 +248,20 @@ public class Player extends BoxGameItem implements KeyListener {
      * Mettant permettant de changer une case avec point en case vide
      */
     private void changeSquare() {
+        
+        // lance le fichier audio
+        new Audio("sons/pacman_chomp").start();
+        
         // on remplace la case par une case vide
-        this.squares[i][j].changeSprite("Squares/empty");
+        this.squares[i][j].changeSprite("images/Squares/empty");
 
         // on regarde quel type était la case
         switch (squares[i][j].getItemType()) {
             case "emptyWithPoint": // case avec petit point
-                this.score += 10; // on incrémente le score de 10
+                this.objScore.addPoints(10, this.i, this.j, this.direction); // on incrémente le score de 10
                 break;
             case "emptyWithBigPoint": // case avec gros point
-                this.score += 50; // on incrémente le score de 50
+                this.objScore.addPoints(50, this.i, this.j, this.direction); // on incrémente le score de 50
                 game.getGhostsList().forEach((g) -> {
                     g.becomeVulnerable(true); // les fantômes deviennent vulnérables
 
@@ -272,16 +271,11 @@ public class Player extends BoxGameItem implements KeyListener {
          
         // on fixe le type de la nouvelle case à vide
         this.squares[i][j].setItemType("empty");
-
-        // on met à jour le score
-        this.objScore.setScore(score);
     }
 
     public void setSquares(Square[][] squares) {
         this.squares = squares;
     }
-
-   
 
     @Override
     public void collideEffect(GameItem gi) {
@@ -320,8 +314,7 @@ public class Player extends BoxGameItem implements KeyListener {
     private void collideWithVulnerableGhost(Ghost g) {
         if (this.isCollideWithVulnerableGhost) {
             g.die();
-            this.score += 200;
-            this.objScore.setScore(score);
+            this.objScore.addPoints(200, this.i, this.j, this.direction);
             this.isCollideWithVulnerableGhost = false;
         }
     }
