@@ -62,20 +62,20 @@ public class PacMan extends Game {
         // création du joueur 
         // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
         player = new Player(this, 336, 392);
-        this.addItem(player);
+        game.addItem(player);
         player.setSquares(map.getSquares());
 
         // ajout du label de score
-        Score labelScore = new Score(this, "images/Score/labelScore", 10, 8);
-        this.addItem(labelScore);
+        Score labelScore = new Score(game, "images/Score/labelScore", 10, 8);
+        game.addItem(labelScore);
 
         // ajout du label du nombre de vies
-        Life labelLife = new Life(this, "images/Lives/labelLives", 10, 540);
-        this.addItem(labelLife);
+        Life labelLife = new Life(game, "images/Lives/labelLives", 10, 540);
+        game.addItem(labelLife);
 
         // création du fantôme orange
         // (position de départ sur les cases (x=8, y=13) = (8 * 28, 13 * 28) en pixels)
-        Clyde clyde = new Clyde(this, map);
+        Clyde clyde = new Clyde(game, map);
         addGhost(clyde);
     }
 

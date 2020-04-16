@@ -67,8 +67,6 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private final Life objLife;
 
-    private int lives = 2;
-    
     /**
      * Attribut permettant de récupérer une instance de score et le fixer
      * suivant le score du joueur
@@ -84,7 +82,7 @@ public class Player extends BoxGameItem implements KeyListener {
     private final PacMan game;
 
     private boolean isCollideWithVulnerableGhost = false;
-    
+    private boolean isCollideWithDangerGhost = false;
     /**
      * Constructeur du joueur
      * @param pacman
@@ -101,13 +99,13 @@ public class Player extends BoxGameItem implements KeyListener {
         this.game = pacman;
         
         // au départ, on a 2 vies
-        this.objLife = new Life(pacman, "images/Lives/2", 58, 540);
+        this.objLife = new Life(game, "images/Lives/2", 58, 540);
         game.addItem(this.objLife);
 
         // initialisation d'un object Score 
-        this.objScore = new Score(pacman, "images/Score/0", 0, 0);
+        this.objScore = new Score(game, "images/Score/0", 0, 0);
     }
-
+    
     @Override
     public void evolve(long l) {
         
@@ -122,6 +120,19 @@ public class Player extends BoxGameItem implements KeyListener {
         // il faut le déplacer de l'autre côté
         if (this.i == 9 && (this.j == 0 || this.j == 24)) {
             crossTheMap(direction);
+        }
+        
+        
+        
+        for (Ghost g : game.getGhostsList()) {
+//            System.out.println(this.j * 28 + " < " + g.getMiddleX() + " < " + (this.j+1) * 28);
+            
+            // TEST NON FONCTIONNEL À 100% (cas où collision pacman-><-ghost bug) 
+            // si le fantôme et le joueur se rentre dedans
+            if (g.getMiddleY() > this.i * 28 && g.getMiddleY() < (this.i+1) * 28
+                    && g.getMiddleX() > this.j * 28 && g.getMiddleX() < (this.j+1) * 28) {
+                System.out.println("collide");
+            }
         }
 
         // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
@@ -255,7 +266,7 @@ public class Player extends BoxGameItem implements KeyListener {
         // on remplace la case par une case vide
         this.squares[i][j].changeSprite("images/Squares/empty");
 
-        // on regarde quel type était la case
+        // on regarde de quel type était la case
         switch (squares[i][j].getItemType()) {
             case "emptyWithPoint": // case avec petit point
                 this.objScore.addPoints(10, this.i, this.j, this.direction); // on incrémente le score de 10
@@ -264,7 +275,6 @@ public class Player extends BoxGameItem implements KeyListener {
                 this.objScore.addPoints(50, this.i, this.j, this.direction); // on incrémente le score de 50
                 game.getGhostsList().forEach((g) -> {
                     g.becomeVulnerable(true); // les fantômes deviennent vulnérables
-
                 });
                 break;
         }
@@ -279,38 +289,42 @@ public class Player extends BoxGameItem implements KeyListener {
 
     @Override
     public void collideEffect(GameItem gi) {
-        
-        if (count % SPEED == 0) {
-            
-            // si la collision a lieu avec un fantôme
-            if (gi.getItemType().equals("ghost")) {
-                
-                for(Ghost g : game.getGhostsList()) {
-                    
-                    if (g.isVulnerable()) { // si le fantôme est vulnérable
-                        this.isCollideWithVulnerableGhost = true;
-                        collideWithVulnerableGhost(g);
-                     } 
-                    
-//else if (this.lives >= 0 ){ // si le fantôme n'est pas vulnérable et que l'utilisateur a encore des vies
-//                        this.lives --;           // on lui enlève une vie      
-//                        switch (this.lives) {
-//                            case 1:                 
-//                                this.objLife.changeSprite("Lives/1");
-//                                break;
-//                            case 0:
-//                                game.remove(this.objLife);
-//                                break;
-//                        }
-//                        
-//                    } else {                               
-////                        game.lost(); // le joueur est mort
+//        
+//        if (count % SPEED == 0) {
+//            
+//            // si la collision a lieu avec un fantôme
+//            if (gi.getItemType().equals("ghost")) {
+//                
+//                for(Ghost g : game.getGhostsList()) {
+//                    
+//                    if (g.isVulnerable()) { // si le fantôme est vulnérable
+//                        this.isCollideWithVulnerableGhost = true;
+//                        collideWithVulnerableGhost(g);
+//                    } else if (this.objLife.getNbLives() >= 0) { // si le fantôme n'est pas vulnérable et que l'utilisateur a encore des vies
+//                        this.objLife.removeALife();
+//                        break;
+//                    } else {
+//                        game.lost(); // le joueur a perdu
 //                    }
-                }
-            }
-        }
+//                }
+//            }
+//        }
     }
 
+    private void collideWithGhost(Ghost g) {
+        System.out.println("on se touche");
+        if (g.isVulnerable()) { // si le fantôme est vulnérable
+            this.isCollideWithVulnerableGhost = true;
+            collideWithVulnerableGhost(g);
+        } else if (this.objLife.getNbLives() >= 0) { // si le fantôme n'est pas vulnérable et que l'utilisateur a encore des vies
+            this.isCollideWithDangerGhost = true;
+            System.out.println("touché fantôme");
+            collideWithDangerGhost();
+        } else {
+            game.lost(); // le joueur a perdu
+        }
+    }
+    
     private void collideWithVulnerableGhost(Ghost g) {
         if (this.isCollideWithVulnerableGhost) {
             g.die();
@@ -319,6 +333,13 @@ public class Player extends BoxGameItem implements KeyListener {
         }
     }
     
+    private void collideWithDangerGhost() {
+        if (this.isCollideWithDangerGhost) {
+            System.out.println("dans le collide");
+            this.objLife.removeALife();
+            this.isCollideWithDangerGhost = false;
+        }
+    }
     @Override
     public void keyPressed(KeyEvent e) {
                 
@@ -347,7 +368,7 @@ public class Player extends BoxGameItem implements KeyListener {
         }
     }
     
-    @Override public boolean isCollide(GameItem gi) { return false; }
+    @Override public boolean isCollide(GameItem gi) {return false;}
     @Override public void keyTyped(KeyEvent e) {}
     @Override public void keyReleased(KeyEvent e) {}
     

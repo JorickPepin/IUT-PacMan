@@ -17,6 +17,18 @@ public class Inky extends Ghost {
 
     @Override
     public void die() { }
+
+    @Override
+    public void setTime(int time) {
+    }
     
-    
+    @Override
+    public int getI() {
+        return 0;
+    }
+
+    @Override
+    public int getJ() {
+        return 0;
+    }
 }

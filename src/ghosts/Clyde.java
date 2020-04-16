@@ -50,7 +50,7 @@ public class Clyde extends Ghost {
      */
     private static byte count = 0;
   
-    private static int temp = 0;
+    private static int time = 0;
     /**
      * Constance représentant la vitesse du fantôme
      * /!\ plus la valeur est grande, moins la vitesse est élevée
@@ -93,29 +93,14 @@ public class Clyde extends Ghost {
             
             // si le fantôme est vulnérable
             if(this.isVulnerable()) {
-                // si le compteur est supérieur à 30, on fait clignoter 
-                // le fantôme pour avertir le joueur que c'est bientôt fini
-                if(temp > 30) { 
-                    this.changeSpriteVulnerableGhost();
-                }           
-                // si le compteur est égal à 40 (~ 10sec), le fantôme
-                // n'est plus vulnérable
-                if(temp == 40) {
-                    this.becomeVulnerable(false);
-                    temp = 0;
-                }
-                temp ++; 
+                setTheVunerableGhost(time);
+                time ++; 
             }
             
-            if(this.isDie()) {
+            if(this.isDead()) {
                 game.removeGhost(this);
                 game.remove(this);
                 Clyde clyde = new Clyde(game, map);                
-                
-//                game.addGhost(clyde);
-//                System.out.println("mort : "+clyde.isDie());
-//                System.out.println("vulnérable : "+clyde.isVulnerable());
-
             }
             
             
@@ -266,4 +251,19 @@ public class Clyde extends Ghost {
         this.squares = squares;
     }
 
+    public void setTime(int time) {
+        Clyde.time = time;
+    }
+
+    @Override
+    public int getI() {
+        return this.i;
+    }
+
+    @Override
+    public int getJ() {
+        return this.j;
+    }
+
+    
 }
