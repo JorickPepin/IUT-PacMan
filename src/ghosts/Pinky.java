@@ -30,4 +30,18 @@ public class Pinky extends Ghost {
     public int getJ() {
         return 0;
     }
+
+    @Override
+    public void setI(int i) {}
+
+    @Override
+    public void setJ(int j) {}
+
+    @Override
+    public void initGhost() {}
+
+    @Override
+    public String getGhostName() {
+        return "Pinky";
+    }
 }

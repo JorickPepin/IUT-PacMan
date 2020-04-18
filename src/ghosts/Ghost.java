@@ -3,6 +3,8 @@ package ghosts;
 
 import iut.BoxGameItem;
 import iut.GameItem;
+import java.util.List;
+import pacman.Map;
 import pacman.PacMan;
 
 /**
@@ -20,11 +22,17 @@ public abstract class Ghost extends BoxGameItem {
     
     private final PacMan game;
     
+    private final Map map;
+    
     public Ghost(PacMan game, String name, int x, int y) {
         super(game, name, x, y); 
         
         this.game = game;
+        
+        this.map = PacMan.getMap();
     }
+    
+  
     
     @Override
     public void collideEffect(GameItem gi) {}
@@ -91,6 +99,26 @@ public abstract class Ghost extends BoxGameItem {
         }
     }
     
+    protected void returnToOrigne(Ghost g) {
+        int origine = 0;
+       
+        // suivant le fantôme, l'origine n'est pas la même
+        switch (g.getGhostName()) {
+            
+            case "Clyde":
+                origine = map.getSquareToNode().get(map.getSquares()[8][13]);
+                break;
+        }
+
+        List<Integer> chemin = map.getGraph().shortestPath(map.getSquareToNode().get(map.getSquares()[g.getI()][g.getJ()]), origine);
+
+        g.getPosition().setX(map.getNodeToSquare().get(chemin.get(1)).getJ() * 28);
+        g.getPosition().setY(map.getNodeToSquare().get(chemin.get(1)).getI() * 28);
+
+        g.setI(map.getNodeToSquare().get(chemin.get(1)).getI());
+        g.setJ(map.getNodeToSquare().get(chemin.get(1)).getJ());
+    }
+
     public void die() {
         this.isDie = true;
     }
@@ -106,5 +134,12 @@ public abstract class Ghost extends BoxGameItem {
     public abstract int getI();
     public abstract int getJ();
     
+    public abstract void setI(int i);
+    public abstract void setJ(int j);
+    
+    public abstract void initGhost();
+    
     public abstract void setTime(int time);
+    
+    public abstract String getGhostName();
 }

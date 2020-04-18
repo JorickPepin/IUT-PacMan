@@ -10,7 +10,7 @@ import pacman.PacMan;
  * @author Jorick
  */
 public class Inky extends Ghost {
-
+ 
     public Inky(PacMan game) {
         super(game, "", 0, 0);
     }
@@ -30,5 +30,19 @@ public class Inky extends Ghost {
     @Override
     public int getJ() {
         return 0;
+    }
+
+    @Override
+    public void setI(int i) {}
+
+    @Override
+    public void setJ(int j) {}
+
+    @Override
+    public void initGhost() {}
+
+    @Override
+    public String getGhostName() {
+        return "Inky";
     }
 }

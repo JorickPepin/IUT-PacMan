@@ -2,13 +2,16 @@
 package pacman;
 
 import ghosts.Ghost;
+import graph.Graph;
 import iut.Game;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import square.Square;
 import java.util.List;
+import java.util.stream.Collectors;
 import square.EmptySquare;
 import square.FullSquare;
 
@@ -38,11 +41,37 @@ public class Map {
     private ArrayList<Ghost> ghostsList = new ArrayList();
         
     /**
+     * Liste permettant de transformer une case en noeud
+     */
+    private java.util.Map<Square,Integer> squareToNode; 
+    
+    /**
+     * Liste permettant de transformer un noeud en case
+     */
+    private java.util.Map<Integer,Square> nodeToSquare;
+    
+    /**
+     * Le nombre de noeuds qui vont composer notre graphe
+     */
+    private int countNode = 0;
+    
+    /**
+     * Graphe associée à la map
+     * Il est composé de toutes les cases vides
+     * Une case = un noeud
+     */
+    private final Graph graph;
+    
+    /**
      * Constructeur de la map
      * @param g = le jeu
      * @throws IOException si le fichier n'est pas trouvé
      */
     public Map(Game g) throws IOException {
+        
+        // initialisation des listes
+        squareToNode = new HashMap<>();
+        nodeToSquare = new HashMap<>();
         
         // initialisation du tableau avec le nombre de lignes et colonnes
         this.squares = new Square[NB_ROWS][NB_COLS];
@@ -65,12 +94,26 @@ public class Map {
                         squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].setItemType("empty");
                         squares[i][j].changeSprite("images/Squares/empty");
+                        
+                        // case vide donc ajoutée au graphe
+                        nodeToSquare.put(countNode, squares[i][j]);
+                        squareToNode.put(squares[i][j], countNode);
+                        
+                        // une case = un noeud dans le graphe
+                        countNode ++;
                         break;
                     case '3':
                         // si le caractère est 3, alors la case est vide avec un gros point
                         squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].setItemType("emptyWithBigPoint");
                         squares[i][j].changeSprite("images/Squares/emptyWithBigPoint");
+                        
+                        // case vide donc ajoutée au graphe
+                        nodeToSquare.put(countNode, squares[i][j]);
+                        squareToNode.put(squares[i][j], countNode);
+                        
+                        // une case = un noeud dans le graphe
+                        countNode ++;
                         break;
                         
                     // tous les caractères suivants n'ont pas de lien avec la case qu'ils créent
@@ -181,8 +224,17 @@ public class Map {
                         squares[i][j].changeSprite("images/Squares/fullDoubleDifferentAngles2");
                         break;
                     case 'z':
-                        squares[i][j] = new FullSquare(g, i, j);
+                        // les 3 cases contenant les fantômes au départ sont considérées comme vide
+                        // pour qu'ils puissent y retourner
+                        squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].changeSprite("images/Squares/fullSeparationGhosts");
+                        
+                        // case vide donc ajoutée au graphe
+                        nodeToSquare.put(countNode, squares[i][j]);
+                        squareToNode.put(squares[i][j], countNode);
+                        
+                        // une case = un noeud dans le graphe
+                        countNode ++;
                         break;
                     case '-':
                         squares[i][j] = new FullSquare(g, i, j);
@@ -195,16 +247,45 @@ public class Map {
                     default:
                         // si le caractère est 0, alors la case est vide avec un petit point (cas général par défaut)
                         squares[i][j] = new EmptySquare(g, i, j);
+                        
+                        // case vide donc ajoutée au graphe
+                        nodeToSquare.put(countNode, squares[i][j]);
+                        squareToNode.put(squares[i][j], countNode);
+                        
+                        // une case = un noeud dans le graphe
+                        countNode ++;
                         break;
                 }
             }
         }
+        
+        // on crée le graphe avec le nombre de noeuds qu'on a obtenu
+        graph = new Graph(countNode);
+
+        // on teste les cases qui sont voisines
+        // si les deux cases sont vides, alors on crée une arête entre elles
+        for(int i=0; i<NB_ROWS-1; i++) {
+            for(int j=0; j<NB_COLS-1; j++) {
+                
+                if (squares[i][j].getSimpleType().equals("empty")) {
+                    
+                    if (squares[i+1][j].getSimpleType().equals("empty")) {
+                        graph.addEdge(squareToNode.get(squares[i][j]), squareToNode.get(squares[i+1][j]));
+                    }
+                    
+                    if (squares[i][j+1].getSimpleType().equals("empty")) {
+                        graph.addEdge(squareToNode.get(squares[i][j]), squareToNode.get(squares[i][j+1]));
+                    }               
+                } 
+            }
+        }
+        
+        // on applique l'agorithme de Floyd-Warshall à notre graphe
+        graph.floydWarshall();        
     }
 
     @Override
-    public String toString() {
-        return "";
-    }
+    public String toString() {return "";}
 
     public Square[][] getSquares() {
         return squares;
@@ -217,4 +298,18 @@ public class Map {
     public ArrayList<Ghost> getGhostsList() {
         return ghostsList;
     }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public java.util.Map<Integer, Square> getNodeToSquare() {
+        return nodeToSquare;
+    }
+
+    public java.util.Map<Square, Integer> getSquareToNode() {
+        return squareToNode;
+    }
+    
+    
 }

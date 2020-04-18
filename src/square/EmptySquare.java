@@ -40,7 +40,7 @@ public class EmptySquare extends Square {
     
     @Override
     public String toString() {
-        return "E"; 
+        return "(" + getI() + ", " + getJ() + ")"; 
     }
 
     @Override
@@ -77,5 +77,10 @@ public class EmptySquare extends Square {
     @Override
     public void setItemType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String getSimpleType() {
+        return "empty";
     }
 }

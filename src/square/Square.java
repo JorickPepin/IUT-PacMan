@@ -47,4 +47,6 @@ public abstract class Square extends BoxGameItem {
     public int getJ() {
         return j;
     } 
+    
+    public abstract String getSimpleType();
 }

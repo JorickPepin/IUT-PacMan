@@ -1,6 +1,8 @@
 package ghosts;
 
+import graph.Graph;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import pacman.Map;
 import pacman.PacMan;
@@ -55,13 +57,20 @@ public class Clyde extends Ghost {
      * Constance représentant la vitesse du fantôme
      * /!\ plus la valeur est grande, moins la vitesse est élevée
      */
-    private static final int SPEED = 10; //10
+    private static final int SPEED = 30; //10
     
     private final PacMan game;
     private final Map map;
-    
+
+    /**
+     * Constructeur du fantôme Clyde
+     * @param game = le jeu
+     * @param map = la map
+     */
     public Clyde(PacMan game, Map map) {
+        // (position de départ sur les cases (x=13, y=8) = (13 * 28, 8 * 28) en pixels)
         super(game, "images/Ghosts/clydeUp", 364, 224);
+        
         // voir attributs pour explication
         this.i = 8; // 224 / 28
         this.j = 13; // 364 / 28
@@ -69,82 +78,111 @@ public class Clyde extends Ghost {
         this.game = game;
         this.map = map;
         this.squares = map.getSquares();
-        
+
         game.addItem(this);
     }
 
     @Override
     public void evolve(long l) {
-        
+
+        if (this.isDead()) {
+
+            // s'il est arrivé à destination
+            if (this.i == 8 && this.j == 13) {
+                System.out.println("il revit");
+                this.live();
+                this.becomeVulnerable(false);
+                this.direction = "up";
+                changeSprite("images/Ghosts/clydeUp");
+
+            } else {
+                
+                changeSprite("images/Ghosts/deadGhostUp");
+
+                returnToOrigne(this);
+                
+//                List<Integer> chemin = findTheShortestPathToOrigine();
+//
+//                this.getPosition().setX(map.getNodeToSquare().get(chemin.get(1)).getJ() * 28);
+//                this.getPosition().setY(map.getNodeToSquare().get(chemin.get(1)).getI() * 28);
+//
+//                this.i = map.getNodeToSquare().get(chemin.get(1)).getI();
+//                this.j = map.getNodeToSquare().get(chemin.get(1)).getJ();
+            }
+        }
+
         // si le fantôme est sur la case à l'extrême gauche ou à l'extrême droite
         // il faut le déplacer de l'autre côté
         if (this.i == 9 && (this.j == 0 || this.j == 24)) {
             crossTheMap(direction);
         }
-            
+
         // test permettant de limiter le nombre de répétition pour limiter la vitesse
         if (count % SPEED == 0) {
-            
-            // on regarde si les cases autour du perso sont pleines 
-            sideBlocked();
-            
-            // on définit la direction dans laquelle il doit se diriger
-            direction = defineDirection();
-            
-            // si le fantôme est vulnérable
-            if(this.isVulnerable()) {
-                setTheVunerableGhost(time);
-                time ++; 
-            }
-            
-            if(this.isDead()) {
-                game.removeGhost(this);
-                game.remove(this);
-                Clyde clyde = new Clyde(game, map);                
-            }
-            
-            
 
-            // selon la direction, on change le sprite et on le fait avancer
-            switch (direction) {
-                case "left":
-                    if (!this.isVulnerable()) {
-                        changeSprite("images/Ghosts/clydeLeft");
-                    }
-                    this.moveXY(-28, 0); // une case vers la gauche
-                    this.j -= 1;
-                    break;
-                case "right":
-                    if (!this.isVulnerable()) {
-                        changeSprite("images/Ghosts/clydeRight");
-                    }
-                    this.moveXY(28, 0); // une case vers la droite
-                    this.j += 1;
-                    break;
-                case "up":
-                    if (!this.isVulnerable()) {
-                        changeSprite("images/Ghosts/clydeUp");
-                    }
-                    this.moveXY(0, -28); // une case vers le haut
-                    this.i -= 1;
-                    break;
-                case "down":
-                    if (!this.isVulnerable()) {
-                        changeSprite("images/Ghosts/clydeDown");
-                    }
-                    this.moveXY(0, 28); // une case vers le bas
-                    this.i += 1;
-                    break;
-            }
+            if (!this.isDead()) {
 
-            leftBlocked = false;
-            downBlocked = false;
-            rightBlocked = false;
-            upBlocked = false;
+                // on regarde si les cases autour du perso sont pleines 
+                sideBlocked();
+
+                // on définit la direction dans laquelle il doit se diriger
+                direction = defineDirection();
+
+                // si le fantôme est vulnérable
+                if (this.isVulnerable()) {
+                    setTheVunerableGhost(time);
+                    time++;
+                }
+
+                // selon la direction, on change le sprite et on le fait avancer
+                switch (direction) {
+                    case "left":
+                        if (!this.isVulnerable()) {
+                            changeSprite("images/Ghosts/clydeLeft");
+                        }
+                        this.moveXY(-28, 0); // une case vers la gauche
+                        this.j -= 1;
+                        break;
+                    case "right":
+                        if (!this.isVulnerable()) {
+                            changeSprite("images/Ghosts/clydeRight");
+                        }
+                        this.moveXY(28, 0); // une case vers la droite
+                        this.j += 1;
+                        break;
+                    case "up":
+                        if (!this.isVulnerable()) {
+                            changeSprite("images/Ghosts/clydeUp");
+                        }
+                        this.moveXY(0, -28); // une case vers le haut
+                        this.i -= 1;
+                        break;
+                    case "down":
+                        if (!this.isVulnerable()) {
+                            changeSprite("images/Ghosts/clydeDown");
+                        }
+                        this.moveXY(0, 28); // une case vers le bas
+                        this.i += 1;
+                        break;
+                }
+
+                leftBlocked = false;
+                downBlocked = false;
+                rightBlocked = false;
+                upBlocked = false;
+            }
         }
         count++;
     }
-
+    
+    private List<Integer> findTheShortestPathToOrigine() {
+        int origine = map.getSquareToNode().get(squares[1][1]);
+        
+        List<Integer> chemin = map.getGraph().shortestPath(map.getSquareToNode().get(squares[i][j]), origine);
+        
+        return chemin;
+    }
+    
     /**
      * Méthode permettant de définir la direction de manière aléatoire
      * @return la direction dans laquelle il doit se diriger
@@ -265,5 +303,31 @@ public class Clyde extends Ghost {
         return this.j;
     }
 
+    @Override
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    @Override
+    public void setJ(int j) {
+        this.j = j;
+    }
+    
+    @Override
+    public void initGhost() {
+        this.i = 8;
+        this.j = 13;
+        
+        this.getPosition().setX(13 * 28);
+        this.getPosition().setY(8 * 28);
+        
+        this.direction = "up";
+    }
+
+    @Override
+    public String getGhostName() {
+        return "Clyde";
+    }
+    
     
 }

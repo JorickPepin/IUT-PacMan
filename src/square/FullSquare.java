@@ -41,4 +41,9 @@ public class FullSquare extends Square {
     public void setItemType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String getSimpleType() {
+        return "full";
+    }
 }

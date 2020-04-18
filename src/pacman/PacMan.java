@@ -74,7 +74,6 @@ public class PacMan extends Game {
         game.addItem(labelLife);
 
         // création du fantôme orange
-        // (position de départ sur les cases (x=8, y=13) = (8 * 28, 13 * 28) en pixels)
         Clyde clyde = new Clyde(game, map);
         addGhost(clyde);
     }
@@ -118,5 +117,9 @@ public class PacMan extends Game {
     
     public ArrayList<Ghost> getGhostsList() {
         return ghostsList;
+    } 
+
+    public static Map getMap() {
+        return map;
     } 
 }
