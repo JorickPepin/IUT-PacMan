@@ -36,7 +36,8 @@ public class Clyde extends Ghost {
  
     @Override
     public void evolve(long l) {
-        
+        super.evolve(0);
+       
         if (enterHasBeenPressed) {
             
             // si le fantôme est sur la case à l'extrême gauche ou à l'extrême droite

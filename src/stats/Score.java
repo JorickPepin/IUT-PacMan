@@ -110,7 +110,7 @@ public class Score extends GameItem {
         
         // on appelle la méthode permettant d'afficher combien de points
         // a obtenu le joueur avec sa dernière action effectuée
-//        if (nbPoints != 10)
+        if (nbPoints != 10)
             displayTheDelta(nbPoints, i, j, direction);
     }
 

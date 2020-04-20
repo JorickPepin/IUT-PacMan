@@ -401,7 +401,18 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
     public abstract String getGhostName();
     
     @Override public void collideEffect(GameItem gi) {}
-    @Override public void evolve(long l) {}
+    
+    @Override public void evolve(long l) {
+        
+        // si le fantôme et le joeur se rentre dedans
+        if (this.getMiddleX() == game.getPlayer().getMiddleX() 
+                && this.getMiddleY() == game.getPlayer().getMiddleY()) {
+            
+            game.getPlayer().collideWithGhost(this);
+        }
+        
+        
+    }
     
     @Override 
     public void keyReleased(KeyEvent e) {

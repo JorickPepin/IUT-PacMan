@@ -140,4 +140,8 @@ public class PacMan extends Game {
     public static Map getMap() {
         return map;
     } 
+
+    public Player getPlayer() {
+        return player;
+    }
 }

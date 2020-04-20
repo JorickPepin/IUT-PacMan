@@ -112,7 +112,7 @@ public class Player extends BoxGameItem implements KeyListener {
     @Override
     public void evolve(long l) {
 
-        if (enterHasBeenPressed) {
+        
 
             // si pacman passe sur une case contenant un petit point ou un gros, 
             // alors on change la case et on incrémente le score
@@ -121,6 +121,9 @@ public class Player extends BoxGameItem implements KeyListener {
                 changeSquare();
             }
 
+            // si le joueur a appuyé sur "entrée" on fait avancer le pacman
+        if (enterHasBeenPressed) {
+            
             // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
             // il faut le déplacer de l'autre côté
             if (this.i == 9 && (this.j == 0 || this.j == 24)) {
@@ -129,24 +132,6 @@ public class Player extends BoxGameItem implements KeyListener {
 
             // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
             if (count % SPEED == 0) {
-
-                // CETTE PARTIE SERT A DETECTER UNE COLLISION ENTRE LE PLAYER ET UN FANTOME
-                // ELLE EST A AMELIORER CAR PAS FIABLE A 100%
-                // la méthode collideEffect prévue à cet effet ne semble pas pouvoir être utilsée car les persos sont des images carrés
-                // de même taille (28x28) et le fait qu'ils se passent à côté sans se toucher est détecté comme étant une collision
-                // -------------------------------------------------------------------------------------------------------
-                for (Ghost g : game.getGhostsList()) {
-                    // System.out.println(this.getLeft() + " < " + g.getMiddleX() + " < " + this.getRight());
-                    // System.out.println(this.getTop() + " < " + g.getMiddleY() + " < " + this.getBottom());
-
-                    // si le fantôme et le joueur se rentre dedans
-                    if (g.getTop() >= this.getTop() && g.getBottom() <= this.getBottom()) {
-                        if (g.getRight() <= this.getRight() && g.getLeft() >= this.getLeft()) {
-                            collideWithGhost(g);
-                        }
-                    }
-                }
-                // -----------------------------------------------------------------------------------------------------------
 
                 // on regarde si les cases autour du perso sont pleines
                 sideBlocked();
@@ -161,7 +146,7 @@ public class Player extends BoxGameItem implements KeyListener {
                         break;
                     case "right":
                         this.pacmanSpriteName = "images/Avance/pacmanright";
-                        if (!rightBlocked) {
+                        if (!rightBlocked) { 
                             this.moveXY(28, 0); // une case vers la droite
                             this.j += 1;
                         }
@@ -303,7 +288,7 @@ public class Player extends BoxGameItem implements KeyListener {
      * Méthode appelée lorqu'une collision a lieu avec un fantôme
      * @param g = le fantôme
      */
-    private void collideWithGhost(Ghost g) {
+    public void collideWithGhost(Ghost g) {
         
         if (g.isVulnerable()) { // si le fantôme est vulnérable
             this.isCollideWithVulnerableGhost = true;

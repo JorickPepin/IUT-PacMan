@@ -5,6 +5,7 @@
  */
 package pacman;
 
+import iut.Audio;
 import iut.BoxGameItem;
 import iut.GameItem;
 import java.awt.event.KeyEvent;
@@ -30,6 +31,9 @@ public class Instruction extends BoxGameItem implements KeyListener {
      */
     private boolean instructionIsDiplayed = true;
     
+    private boolean test = false;
+    
+    
     public Instruction(PacMan game) {
         super(game, "images/Diverse/departureInstructions", 225, 280);
         this.game = game;
@@ -42,6 +46,21 @@ public class Instruction extends BoxGameItem implements KeyListener {
             flickerInstruction();
         }
         count++;
+        
+//        if (!test) {
+//            Audio test2 = new Audio("sons/pacman_beginning");
+//            test2.start();
+//            
+//           
+//            if(test2.isInterrupted()) {
+//                System.out.println("coupéééééé");
+//                test = true;
+//            }
+//    }
+            
+            
+                
+        
     }
 
     
