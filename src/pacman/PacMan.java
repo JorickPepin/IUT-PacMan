@@ -1,8 +1,11 @@
 
 package pacman;
 
+import ghosts.Blinky;
 import ghosts.Clyde;
 import ghosts.Ghost;
+import ghosts.Inky;
+import ghosts.Pinky;
 import stats.Life;
 import stats.Score;
 import iut.Game;
@@ -72,10 +75,25 @@ public class PacMan extends Game {
         // ajout du label du nombre de vies
         Life labelLife = new Life(game, "images/Lives/labelLives", 10, 540);
         game.addItem(labelLife);
+        
+        Instruction departureInstruction = new Instruction(game);
+        game.addItem(departureInstruction);
 
         // création du fantôme orange
-        Clyde clyde = new Clyde(game, map);
+        Clyde clyde = new Clyde(game);
         addGhost(clyde);
+        
+        // création du fantôme bleu
+        Blinky blinky = new Blinky(game);
+        addGhost(blinky);
+        
+        // création du fantôme rouge
+        Inky inky = new Inky(game); 
+        addGhost(inky);
+        
+        // création du fantôme rose
+        Pinky pinky = new Pinky(game);
+        addGhost(pinky);
     }
 
     @Override

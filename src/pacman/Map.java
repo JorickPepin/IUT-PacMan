@@ -229,6 +229,10 @@ public class Map {
                         squares[i][j] = new EmptySquare(g, i, j);
                         squares[i][j].changeSprite("images/Squares/fullSeparationGhosts");
                         
+                        // on met quand même le type en full pour que l'utilisateur ne puisse pas y aller
+                        // et que les fantômes ne se déplacent pas dedans
+                        squares[i][j].setItemType("full");
+                        
                         // case vide donc ajoutée au graphe
                         nodeToSquare.put(countNode, squares[i][j]);
                         squareToNode.put(squares[i][j], countNode);

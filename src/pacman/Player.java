@@ -84,6 +84,8 @@ public class Player extends BoxGameItem implements KeyListener {
     private boolean isCollideWithVulnerableGhost = false;
     private boolean isCollideWithDangerGhost = false;
     
+    private boolean enterHasBeenPressed = false;
+    
     /**
      * Constructeur du joueur
      * @param pacman
@@ -107,89 +109,93 @@ public class Player extends BoxGameItem implements KeyListener {
         this.objScore = new Score(game, "images/Score/0", 0, 0);
     }
     
-    private int test = 0;
-    
     @Override
     public void evolve(long l) {
-        
-        // si pacman passe sur une case contenant un petit point ou un gros, 
-        // alors on change la case et on incrémente le score
-        if (("emptyWithPoint".equals(squares[i][j].getItemType()))
-                || ("emptyWithBigPoint".equals(squares[i][j].getItemType()))) {
-            changeSquare();
-        }
 
-        // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
-        // il faut le déplacer de l'autre côté
-        if (this.i == 9 && (this.j == 0 || this.j == 24)) {
-            crossTheMap(direction);
-        }
+        if (enterHasBeenPressed) {
 
+            // si pacman passe sur une case contenant un petit point ou un gros, 
+            // alors on change la case et on incrémente le score
+            if (("emptyWithPoint".equals(squares[i][j].getItemType()))
+                    || ("emptyWithBigPoint".equals(squares[i][j].getItemType()))) {
+                changeSquare();
+            }
 
+            // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
+            // il faut le déplacer de l'autre côté
+            if (this.i == 9 && (this.j == 0 || this.j == 24)) {
+                crossTheMap(direction);
+            }
 
-        // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
-        if (count % SPEED == 0) {
+            // est vrai 1 fois sur SPEED pour limiter la vitesse du pacman
+            if (count % SPEED == 0) {
 
-            for (Ghost g : game.getGhostsList()) {
-//            System.out.println(this.getLeft() + " < " + g.getMiddleX() + " < " + this.getRight());
-//            System.out.println(this.getTop() + " < " + g.getMiddleY() + " < " + this.getBottom());
+                // CETTE PARTIE SERT A DETECTER UNE COLLISION ENTRE LE PLAYER ET UN FANTOME
+                // ELLE EST A AMELIORER CAR PAS FIABLE A 100%
+                // la méthode collideEffect prévue à cet effet ne semble pas pouvoir être utilsée car les persos sont des images carrés
+                // de même taille (28x28) et le fait qu'ils se passent à côté sans se toucher est détecté comme étant une collision
+                // -------------------------------------------------------------------------------------------------------
+                for (Ghost g : game.getGhostsList()) {
+                    // System.out.println(this.getLeft() + " < " + g.getMiddleX() + " < " + this.getRight());
+                    // System.out.println(this.getTop() + " < " + g.getMiddleY() + " < " + this.getBottom());
 
-            // si le fantôme et le joueur se rentre dedans
-            if (g.getTop() >= this.getTop() && g.getBottom() <= this.getBottom()) { 
-                if (g.getRight() <= this.getRight() && g.getLeft() >= this.getLeft()) {
-                    collideWithGhost(g);
+                    // si le fantôme et le joueur se rentre dedans
+                    if (g.getTop() >= this.getTop() && g.getBottom() <= this.getBottom()) {
+                        if (g.getRight() <= this.getRight() && g.getLeft() >= this.getLeft()) {
+                            collideWithGhost(g);
+                        }
+                    }
                 }
+                // -----------------------------------------------------------------------------------------------------------
+
+                // on regarde si les cases autour du perso sont pleines
+                sideBlocked();
+
+                switch (direction) {
+                    case "left":
+                        this.pacmanSpriteName = "images/Avance/pacmanleft";
+                        if (!leftBlocked) {
+                            this.moveXY(-28, 0); // une case vers la gauche
+                            this.j -= 1;
+                        }
+                        break;
+                    case "right":
+                        this.pacmanSpriteName = "images/Avance/pacmanright";
+                        if (!rightBlocked) {
+                            this.moveXY(28, 0); // une case vers la droite
+                            this.j += 1;
+                        }
+                        break;
+                    case "up":
+                        this.pacmanSpriteName = "images/Avance/pacmanup";
+                        if (!upBlocked) {
+                            this.moveXY(0, -28); // une case vers le haut
+                            this.i -= 1;
+                        }
+                        break;
+                    case "down":
+                        this.pacmanSpriteName = "images/Avance/pacmandown";
+                        if (!downBlocked) {
+                            this.moveXY(0, 28); // une case vers le bas
+                            this.i += 1;
+                        }
+                        break;
+                }
+
+                // on réinitialise les différentes direction
+                leftBlocked = false;
+                downBlocked = false;
+                rightBlocked = false;
+                upBlocked = false;
+
+                // on change l'image du pacman
+                changePacmanSprite(pacmanSpriteName);
+
+//            if (count % (SPEED*40) == 0)
+                this.objScore.cleanDeltaItemsList();
             }
-            
-
+            count++;
         }
-            
-            // on regarde si les cases autour du perso sont pleines
-            sideBlocked();
-
-            switch (direction) {
-                case "left":
-                    this.pacmanSpriteName = "images/Avance/pacmanleft";
-                    if (!leftBlocked) {
-                        this.moveXY(-28, 0); // une case vers la gauche
-                        this.j -= 1;
-                    }
-                    break;
-                case "right":
-                    this.pacmanSpriteName = "images/Avance/pacmanright";
-                    if (!rightBlocked) {
-                        this.moveXY(28, 0); // une case vers la droite
-                        this.j += 1;
-                    }
-                    break;
-                case "up":
-                    this.pacmanSpriteName = "images/Avance/pacmanup";
-                    if (!upBlocked) {
-                        this.moveXY(0, -28); // une case vers le haut
-                        this.i -= 1;
-                    }
-                    break;
-                case "down":
-                    this.pacmanSpriteName = "images/Avance/pacmandown";
-                    if (!downBlocked) {
-                        this.moveXY(0, 28); // une case vers le bas
-                        this.i += 1;
-                    }
-                    break;
-            }
-
-            // on réinitialise les différentes direction
-            leftBlocked = false;
-            downBlocked = false;
-            rightBlocked = false;
-            upBlocked = false;
-
-            // on change l'image du pacman
-            changePacmanSprite(pacmanSpriteName);
-
-            this.objScore.cleanDeltaItemsList();
-        }
-        count++;
     }
 
     /**
@@ -340,7 +346,7 @@ public class Player extends BoxGameItem implements KeyListener {
             // on enlève une vie
             this.objLife.removeALife();
             
-            // on "recommence" la partie
+            // on "recommence" la partie = on réinitiliase les positions
             restartGame();
             
             this.isCollideWithDangerGhost = false;
@@ -391,7 +397,13 @@ public class Player extends BoxGameItem implements KeyListener {
     @Override public void collideEffect(GameItem gi) {}
     @Override public boolean isCollide(GameItem gi) {return false;}
     @Override public void keyTyped(KeyEvent e) {}
-    @Override public void keyReleased(KeyEvent e) {}
+    
+    @Override 
+    public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.enterHasBeenPressed = true;
+        }
+    }
     
     @Override
     public String getItemType() {

@@ -110,7 +110,8 @@ public class Score extends GameItem {
         
         // on appelle la méthode permettant d'afficher combien de points
         // a obtenu le joueur avec sa dernière action effectuée
-        displayTheDelta(nbPoints, i, j, direction);
+//        if (nbPoints != 10)
+            displayTheDelta(nbPoints, i, j, direction);
     }
 
     /**
@@ -156,7 +157,7 @@ public class Score extends GameItem {
     /**
      * Méthode permettant d'afficher le delta, c'est à dire la différence entre 
      * le nouveau score et le score d'avant (combien il a marqué de points)
-     * @param nbPoints = le nombre de points qu'il a gagnés (variant selon l'action effectuée
+     * @param nbPoints = le nombre de points qu'il a gagnés (variant selon l'action effectuée)
      * @param i = la position du joueur
      * @param j = la position du joueur
      * @param direction = la direction du joueur
