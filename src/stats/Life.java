@@ -24,7 +24,7 @@ public class Life extends GameItem {
     public void removeALife() {
 
         this.nbLives--;
-        System.out.println(nbLives);
+        
         if (nbLives == 1) {
             this.changeSprite("images/Lives/1");
         } else {

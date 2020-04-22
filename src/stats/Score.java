@@ -73,6 +73,9 @@ public class Score extends GameItem {
         // on enlève le +[nbPoints] à côté du joueur
         cleanDeltaItemsList();
                 
+        // on "nettoie" pour enlever le score présent afin de mettre le nouveau
+        cleanScoreItemsList(); 
+        
         // le score vaut le score actuel + le nombre de points obtenus lors
         // de la dernière action
         this.score += nbPoints;
@@ -85,9 +88,6 @@ public class Score extends GameItem {
         
         // on transforme le score en chaîne de caractères pour pouvoir "balayer" dedans (= récupérer chaque chiffre)
         String s = valueOf(score);
-        
-        // on "nettoie" pour enlever le score présent afin de mettre le nouveau
-        cleanScoreItemsList();       
         
         // la liste dépend de la taille du score
         // si le score est 20, la liste contient 2 éléments

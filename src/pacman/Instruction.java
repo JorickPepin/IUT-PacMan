@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package pacman;
 
 import iut.Audio;
@@ -41,29 +37,15 @@ public class Instruction extends BoxGameItem implements KeyListener {
 
     @Override
     public void evolve(long l) {
+        
         // est vrai 1 fois sur 20 afin de reduire la vitesse d'exécution
         if (count % 20 == 0) {
+            // on fait clignoter l'instruction
             flickerInstruction();
         }
         count++;
-        
-//        if (!test) {
-//            Audio test2 = new Audio("sons/pacman_beginning");
-//            test2.start();
-//            
-//           
-//            if(test2.isInterrupted()) {
-//                System.out.println("coupéééééé");
-//                test = true;
-//            }
-//    }
-            
-            
-                
-        
     }
 
-    
     /**
      * Méthode permettant de faire clignoter l'instruction
      */

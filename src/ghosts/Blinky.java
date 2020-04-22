@@ -49,17 +49,17 @@ public class Blinky extends Ghost {
             // si le fantôme meurt
             if (this.isDead()) {
 
-                if (count % (double)SPEED/3.0 == 0) {
+                if (count % (double)speed/3.0 == 0) {
                     // on appelle la méthode de la classe Ghost qui gère ce cas
                     ghostIsDead();
                 }
             }
 
             // si le fantôme est vivant
-            if (!this.isDead()) {
+            if (!this.isDead() && !this.isImmobilize) {
 
                 // test permettant de limiter le nombre de répétition pour limiter la vitesse
-                if (count % SPEED == 0) {
+                if (count % speed == 0) {
 
                     // on regarde si les cases autour du perso sont pleines 
                     sideBlocked();
@@ -125,5 +125,10 @@ public class Blinky extends Ghost {
     @Override
     public String getGhostName() {
         return "Blinky";
+    }
+
+    @Override
+    public String getOrigineSprite() {
+        return "images/Ghosts/blinkyRight";
     }
 }

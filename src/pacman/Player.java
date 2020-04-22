@@ -86,6 +86,8 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private boolean enterHasBeenPressed = false;
     
+    private boolean isImmobilize = false;
+    
     /**
      * Constructeur du joueur
      * @param pacman
@@ -93,7 +95,7 @@ public class Player extends BoxGameItem implements KeyListener {
      * @param y = position de départ en ordonnée
      */
     public Player(PacMan pacman, int x, int y) {
-        super(pacman, "images/Avance/pacmanright", x, y);
+        super(pacman, "images/Pacman/pacmanright", x, y);
 
         // voir attributs pour explication
         this.i = y / 28;
@@ -122,7 +124,7 @@ public class Player extends BoxGameItem implements KeyListener {
             }
 
             // si le joueur a appuyé sur "entrée" on fait avancer le pacman
-        if (enterHasBeenPressed) {
+        if (enterHasBeenPressed && !isImmobilize) {
             
             // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
             // il faut le déplacer de l'autre côté
@@ -138,28 +140,28 @@ public class Player extends BoxGameItem implements KeyListener {
 
                 switch (direction) {
                     case "left":
-                        this.pacmanSpriteName = "images/Avance/pacmanleft";
+                        this.pacmanSpriteName = "images/Pacman/pacmanleft";
                         if (!leftBlocked) {
                             this.moveXY(-28, 0); // une case vers la gauche
                             this.j -= 1;
                         }
                         break;
                     case "right":
-                        this.pacmanSpriteName = "images/Avance/pacmanright";
+                        this.pacmanSpriteName = "images/Pacman/pacmanright";
                         if (!rightBlocked) { 
                             this.moveXY(28, 0); // une case vers la droite
                             this.j += 1;
                         }
                         break;
                     case "up":
-                        this.pacmanSpriteName = "images/Avance/pacmanup";
+                        this.pacmanSpriteName = "images/Pacman/pacmanup";
                         if (!upBlocked) {
                             this.moveXY(0, -28); // une case vers le haut
                             this.i -= 1;
                         }
                         break;
                     case "down":
-                        this.pacmanSpriteName = "images/Avance/pacmandown";
+                        this.pacmanSpriteName = "images/Pacman/pacmandown";
                         if (!downBlocked) {
                             this.moveXY(0, 28); // une case vers le bas
                             this.i += 1;
@@ -223,7 +225,7 @@ public class Player extends BoxGameItem implements KeyListener {
     private void changePacmanSprite(String pacmanSpriteName) {
 
         if (!isPacmanFull) {
-            changeSprite("images/Avance/pacmanfull");
+            changeSprite("images/Pacman/pacmanfull");
             isPacmanFull = true;
         } else {
             changeSprite(pacmanSpriteName);
@@ -287,8 +289,9 @@ public class Player extends BoxGameItem implements KeyListener {
     /**
      * Méthode appelée lorqu'une collision a lieu avec un fantôme
      * @param g = le fantôme
+     * @param time
      */
-    public void collideWithGhost(Ghost g) {
+    public void collideWithGhost(Ghost g, int time) {
         
         if (g.isVulnerable()) { // si le fantôme est vulnérable
             this.isCollideWithVulnerableGhost = true;
@@ -296,7 +299,7 @@ public class Player extends BoxGameItem implements KeyListener {
         } else if (this.objLife.getNbLives() >= 0) { // si le fantôme n'est pas vulnérable et que le joueur a encore des vies
             this.isCollideWithDangerGhost = true;
             
-            collideWithDangerGhost();
+            collideWithDangerGhost(time);
         } else { // si le fantôme n'est pas vulnérable et que le joueur n'a plus de vie
             game.lost(); // le joueur a perdu
         }
@@ -312,9 +315,27 @@ public class Player extends BoxGameItem implements KeyListener {
             
             // le fantôme meurt
             g.die();
-            
-            // on ajoute les points au joueur  
-            this.objScore.addPoints(200, this.i, this.j, this.direction); // A MODIFIER car le nombre de points change en fonction du nb de fantômes restants
+
+            // suivant le nombre de fantômes restant, le nombre de points n'est pas
+            // le même
+            switch (game.getGhostsList().size()) {
+                case 4:
+                    // on ajoute 200 points au joueur  
+                    this.objScore.addPoints(200, this.i, this.j, this.direction);
+                    break;
+                case 3:
+                    // on ajoute 400 points au joueur  
+                    this.objScore.addPoints(400, this.i, this.j, this.direction);
+                    break;
+                case 2:
+                    // on ajoute 800 points au joueur  
+                    this.objScore.addPoints(800, this.i, this.j, this.direction);
+                    break;
+                case 1:
+                    // on ajoute 1600 points au joueur  
+                    this.objScore.addPoints(1600, this.i, this.j, this.direction);
+                    break;
+            }
             
             this.isCollideWithVulnerableGhost = false;
         }
@@ -324,21 +345,89 @@ public class Player extends BoxGameItem implements KeyListener {
      * Méthode appelée lorque le joueur entre en collion avec un fantôme 
      * non vulnérable
      */
-    private void collideWithDangerGhost() {
-        // on sert d'un booleen pour éviter de faire les actions plusieurs fois
-        if (this.isCollideWithDangerGhost) {
+    private void collideWithDangerGhost(int time) {
+        
+        // on effectue ce test pour faire les actions suivantes qu'une seule fois
+        if (time == 0) {
+
+            // pacman devient immobile
+            this.isImmobilize = true;
+
+            // les fantômes aussi
+            for (Ghost g : game.getGhostsList()) {
+                g.isImmobilize();
+            }            
+
+            // on lance l'audio correspondant à la mort de pacman
+            new Audio("sons/pacman_death").start();
             
-            // on enlève une vie
-            this.objLife.removeALife();
-            
+             // on enlève une vie
+//            this.objLife.removeALife(); // a fixer
+        }
+        
+        if (time == 5) {
+            for (Ghost g : game.getGhostsList()) {
+                g.wipeOutGhost();
+            }
+        }
+
+        // selon le temps écoulé, on change le sprite
+        switch (time) {
+            case 5:
+                this.changeSprite("images/DeadPacman/1");
+                break;
+            case 9:
+                this.changeSprite("images/DeadPacman/2");
+                break;
+            case 13:
+                this.changeSprite("images/DeadPacman/3");
+                break;
+            case 17:
+                this.changeSprite("imasges/DeadPacman/4");
+                break;
+            case 21:
+                this.changeSprite("images/DeadPacman/5");
+                break;
+            case 25:
+                this.changeSprite("images/DeadPacman/6");
+                break;
+            case 29:
+                this.changeSprite("images/DeadPacman/7");
+                break;
+            case 33:
+                this.changeSprite("images/DeadPacman/8");
+                break;
+            case 37:
+                this.changeSprite("images/DeadPacman/9");
+                break;
+            case 41:
+                this.changeSprite("images/DeadPacman/10");
+                break;
+            case 45:
+                this.changeSprite("images/DeadPacman/11");
+                break;
+            case 49:
+                this.changeSprite("images/Squares/empty");
+                break;
+        }
+
+        if (time == 55) {
             // on "recommence" la partie = on réinitiliase les positions
             restartGame();
-            
-            this.isCollideWithDangerGhost = false;
         }
+
+    }
+    
+    private void setSpritesDeadPacman() {
+        
+        
     }
     
     private void restartGame() {
+        
+        // paramètres de départ
+        this.direction = "right";
+        this.changeSprite("images/Pacman/pacmanright");
         
         // on positionne le joueur à la position initiale
         this.getPosition().setX(336);
@@ -346,6 +435,12 @@ public class Player extends BoxGameItem implements KeyListener {
         this.getPosition().setY(392);
         this.i = 392 / 28;
         
+//        for(Ghost g : game.getGhostsList()) {
+//            g.setOriginalSprite();
+//        }
+        
+        // on fait de même pour les fantômes en appelant la méthode gérant ce 
+        // cas dans la classe Ghost
         for(Ghost g : game.getGhostsList()) {
             g.initGhost();
         }

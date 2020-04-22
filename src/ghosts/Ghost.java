@@ -69,10 +69,10 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
     protected byte count = 0;
     
     /**
-     * Constante représentant la vitesse du fantôme
+     * Attribut représentant la vitesse du fantôme
      * /!\ plus la valeur est grande, moins la vitesse est élevée
      */
-    protected static final int SPEED = 10; //10
+    protected static int speed = 10; //10
     
     private final PacMan game;
     
@@ -91,6 +91,10 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
     protected int time = 0;
     
     protected boolean enterHasBeenPressed = false;
+    
+    protected boolean isImmobilize = false;
+    
+    private boolean collisionWithPacman = false;
     
     /**
      * Constructeur du fantôme
@@ -121,7 +125,9 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         this.isVulnerable = vulnerable; 
         
         // l'image du fantôme devient celle du fantôme bleu
-        this.changeSprite("images/Ghosts/dangerBlue");
+        if(!this.isDead) {
+            this.changeSprite("images/Ghosts/dangerBlue");
+        }
         
         // on initialise le compteur permettant de définir la durée pendant
         // laquelle le fantôme va être vulnérable à 0
@@ -190,17 +196,20 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
      * Méthode permettant de gérer le cas où le fantôme vient d'être mangé
      */
     protected void ghostIsDead() {
-
-        // il doit alors retourner à sa position d'origine
+        
+        game.removeGhost(this);
+        
+        // il n'est plus vulnérable
+        this.becomeVulnerable(false); 
         
         // s'il est à sa position d'origine 
         if (map.getNodeToSquare().get(origine).getI() == this.i
                 && map.getNodeToSquare().get(origine).getJ() == this.j) {
 
             this.live(); // il est de nouveau vivant
-            this.becomeVulnerable(false); // il n'est donc plus vulnérable
             this.direction = "up"; // il part vers le haut
             changeSprite("images/Ghosts/clydeUp"); // on réinitialise son sprite
+            game.addGhost(this);
 
         } else { // il n'est pas encore à sa position d'origine
             
@@ -270,6 +279,18 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         this.getPosition().setY(i * 28);
         
         this.direction = "up";
+        
+        this.changeSprite(this.getOrigineSprite());
+    }
+    
+    public void wipeOutGhost() {
+        this.changeSprite("images/Squares/empty");
+        this.getPosition().setX(336);
+        this.getPosition().setY(196);
+    }
+    
+    public void setOriginalSprite() {
+        this.changeSprite(this.getOrigineSprite());
     }
     
     /**
@@ -394,11 +415,19 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         return this.isVulnerable;
     }
         
+    public void isImmobilize() {
+        this.isImmobilize = true;
+    }
+    
+    
+    
     /**
      * Méthode abstraite permettant d'obtenir le nom du fantôme
      * @return le nom du fantôme (Clyde, Inky, ...)
      */
     public abstract String getGhostName();
+    
+    public abstract String getOrigineSprite();
     
     @Override public void collideEffect(GameItem gi) {}
     
@@ -408,10 +437,25 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         if (this.getMiddleX() == game.getPlayer().getMiddleX() 
                 && this.getMiddleY() == game.getPlayer().getMiddleY()) {
             
-            game.getPlayer().collideWithGhost(this);
+            // si le fantôme est mort (il retourne au spawn) et ce n'est pas 
+            // considéré comme une collision
+            if (!this.isDead && !this.isImmobilize) {
+                collisionWithPacman = true; 
+                time = 0;
+            }
         }
         
-        
+        if (this.collisionWithPacman) {
+            game.getPlayer().collideWithGhost(this, time);
+            time ++;
+        }
+
+
+        if (this.isVulnerable) { // si le fantôme est vulnérable
+            Ghost.speed = 20;    // il avance plus lentement
+        } else {
+            Ghost.speed = 10;
+        }
     }
     
     @Override 
