@@ -8,7 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- *
+ * Classe représentant l'instruction "pressez entrée" affichée au départ
+ * 
  * @author Jorick
  */
 public class Instruction extends BoxGameItem implements KeyListener {
@@ -26,10 +27,7 @@ public class Instruction extends BoxGameItem implements KeyListener {
      * Attribut permettant de faire clignoter l'instruction
      */
     private boolean instructionIsDiplayed = true;
-    
-    private boolean test = false;
-    
-    
+
     public Instruction(PacMan game) {
         super(game, "images/Diverse/departureInstructions", 225, 280);
         this.game = game;

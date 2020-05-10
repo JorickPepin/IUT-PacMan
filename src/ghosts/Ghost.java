@@ -419,18 +419,6 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         this.isImmobilize = true;
     }
     
-    
-    
-    /**
-     * Méthode abstraite permettant d'obtenir le nom du fantôme
-     * @return le nom du fantôme (Clyde, Inky, ...)
-     */
-    public abstract String getGhostName();
-    
-    public abstract String getOrigineSprite();
-    
-    @Override public void collideEffect(GameItem gi) {}
-    
     @Override public void evolve(long l) {
         
         // si le fantôme et le joeur se rentre dedans
@@ -441,20 +429,29 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
             // considéré comme une collision
             if (!this.isDead && !this.isImmobilize) {
                 collisionWithPacman = true; 
-                time = 0;
+                
+                // on initialise le temps écoulé depuis la collision à 0
+                time = 0; 
             }
         }
         
-        if (this.collisionWithPacman) {
+        // le fantôme est tué par pacman
+        if (this.collisionWithPacman && this.isVulnerable) {
+            game.getPlayer().collideWithGhost(this, time);  
+            this.collisionWithPacman = false;
+        }
+        
+        // pacman est tué par le fantôme
+        if (this.collisionWithPacman && !this.isVulnerable) {
             game.getPlayer().collideWithGhost(this, time);
             time ++;
         }
 
-
-        if (this.isVulnerable) { // si le fantôme est vulnérable
+        // si le fantôme est vulnérable
+        if (this.isVulnerable) { 
             Ghost.speed = 20;    // il avance plus lentement
         } else {
-            Ghost.speed = 10;
+            Ghost.speed = 10;    // sinon il est à sa vitesse normale
         }
     }
     
@@ -465,6 +462,19 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         }
     }
     
+    /**
+     * Méthode abstraite permettant d'obtenir le nom du fantôme
+     * @return le nom du fantôme (Clyde, Inky, ...)
+     */
+    public abstract String getGhostName();
+    
+    /**
+     * Méthode abstraite permettant d'obtenir le sprite d'origine du fantôme
+     * @return le sprite de départ du fantôme
+     */
+    public abstract String getOrigineSprite();
+    
+    @Override public void collideEffect(GameItem gi) {}
     @Override public void keyTyped(KeyEvent e) {}
     @Override public void keyPressed(KeyEvent e) {}
     
