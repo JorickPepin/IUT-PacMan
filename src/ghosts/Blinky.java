@@ -15,7 +15,7 @@ public class Blinky extends Ghost {
      * Compteur pour savoi si le fantôme peut quitter le spawn ou non
      * Blinky doit le quitter après environ 5 secondes
      */
-    private int isReadyToGo = 0;
+//    private int isReadyToGo = 0;
              
     /**
      * Constructeur de Blinky (fantôme bleu)

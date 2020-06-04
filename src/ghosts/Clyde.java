@@ -12,12 +12,6 @@ import pacman.PacMan;
 public class Clyde extends Ghost {
 
     /**
-     * Compteur pour savoi si le fantôme peut quitter le spawn ou non
-     * Clyde doit le quitter après environ 10 secondes
-     */
-    private int isReadyToGo = 0;
-    
-    /**
      * Constructeur du fantôme Clyde
      * @param game = le jeu
      */

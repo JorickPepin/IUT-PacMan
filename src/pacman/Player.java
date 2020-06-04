@@ -81,10 +81,14 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private final PacMan game;
     
+    /**
+     * Attribut permettant de savoir si l'utilisateur a appuyé sur entrée
+     */
     private boolean enterHasBeenPressed = false;
     
     private boolean isImmobilize = false;
     
+    private int test = 0;
     /**
      * Constructeur du joueur
      * @param pacman
@@ -132,7 +136,7 @@ public class Player extends BoxGameItem implements KeyListener {
 
                 // on regarde si les cases autour du perso sont pleines
                 sideBlocked();
-
+                                         
                 switch (direction) {
                     case "left":
                         this.pacmanSpriteName = "images/Pacman/pacmanleft";
@@ -308,8 +312,8 @@ public class Player extends BoxGameItem implements KeyListener {
         // le fantôme meurt
         g.die();
 
-        // suivant le nombre de fantômes restant, le nombre de points n'est pas
-        // le même
+        // suivant le nombre de fantômes restant, le nombre de points gagnés
+        // n'est pas le même
         switch (game.getGhostsList().size()) {
             case 4:
                 // on ajoute 200 points au joueur  
@@ -333,10 +337,12 @@ public class Player extends BoxGameItem implements KeyListener {
     
     /**
      * Méthode appelée lorque le joueur entre en collion avec un fantôme 
-     * non vulnérable
+     * non vulnérable (pacman meurt)
      */
     private void collideWithDangerGhost(int time) {
 
+        // on fait des tests sur time pour avoir des évènements de manière progressive
+        
         if (time == 0) {
 
             // pacman devient immobile
@@ -418,16 +424,21 @@ public class Player extends BoxGameItem implements KeyListener {
         this.getPosition().setY(392);
         this.i = 392 / 28;
         
-//        for(Ghost g : game.getGhostsList()) {
-//            g.setOriginalSprite();
-//        }
-        
         // on fait de même pour les fantômes en appelant la méthode gérant ce 
         // cas dans la classe Ghost
         for(Ghost g : game.getGhostsList()) {
             g.initGhost();
         }
         
+        // on affiche le message "Nouvelle chancce"
+        Instruction departureInstruction = new Instruction(game, "images/Diverse/newChance");
+        game.addItem(departureInstruction);
+        
+        // pacman  n'est plus immobilisé
+        this.isImmobilize = false;
+        
+        // l'utilisateur doit de nouveau presser entrée
+        this.enterHasBeenPressed = false;
     }
     
     @Override

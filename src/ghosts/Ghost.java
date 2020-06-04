@@ -90,11 +90,22 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
      */
     protected int time = 0;
     
+    /**
+     * Attribut permettant de savoir si l'utilisateur a appuyé sur entrée
+     */
     protected boolean enterHasBeenPressed = false;
     
     protected boolean isImmobilize = false;
     
     private boolean collisionWithPacman = false;
+    
+    /**
+     * Compteur pour savoi si le fantôme peut quitter le spawn ou non
+     * Blinky doit le quitter après environ 5 secondes
+     * Clyde doit le quitter après environ 10 secondes
+     * Les autres n'ont pas de temps d'attente
+     */
+    protected int isReadyToGo = 0;
     
     /**
      * Constructeur du fantôme
@@ -117,7 +128,7 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
     }
 
     /**
-     * Méthode permettant de devenir le fantôme comme étant vulnérable
+     * Méthode permettant de définir le fantôme comme étant vulnérable
      * (pacman a mangé une super pac-gomme (gros point))
      * @param vulnerable = true ou false selon s'il est vulnérable ou pas
      */
@@ -272,17 +283,36 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
      */
     public void initGhost() {
         
+        // on récupère ses coordonnées ligne/colonne d'origines
         this.i = map.getNodeToSquare().get(origine).getI();
         this.j = map.getNodeToSquare().get(origine).getJ();
         
+        // on fixe sa position avec les coordonnées en pixels
         this.getPosition().setX(j * 28);
         this.getPosition().setY(i * 28);
         
+        // le fantôme repart vers le haut
         this.direction = "up";
         
+        // on lui remet son sprite d'origine
         this.changeSprite(this.getOrigineSprite());
+        
+        // le fantôme n'est plus vulnérable
+        this.isVulnerable = false;
+        
+        // le fantôme n'est plus immobilisé
+        this.isImmobilize = false;
+        
+        // l'utilisateur doit de nouveau presser entrée
+        this.enterHasBeenPressed = false;
+        
+        // on remet le compteur d'attente à 0
+        this.isReadyToGo = 0;
     }
     
+    /**
+     * Méthode permettant de faire disparaitre les fantômes afin qu'ils ne soient plus visibles
+     */
     public void wipeOutGhost() {
         this.changeSprite("images/Squares/empty");
         this.getPosition().setX(336);

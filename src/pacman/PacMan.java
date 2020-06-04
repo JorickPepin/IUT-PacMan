@@ -70,13 +70,13 @@ public class PacMan extends Game {
 
         // ajout du label de score
         Score labelScore = new Score(game, "images/Score/labelScore", 10, 8);
-        game.addItem(labelScore);
+        game.addItem(labelScore); 
 
         // ajout du label du nombre de vies
         Life labelLife = new Life(game, "images/Lives/labelLives", 10, 540);
         game.addItem(labelLife);
         
-        Instruction departureInstruction = new Instruction(game);
+        Instruction departureInstruction = new Instruction(game, "images/Diverse/departureInstructions");
         game.addItem(departureInstruction);
 
         // création du fantôme orange

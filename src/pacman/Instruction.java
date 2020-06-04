@@ -28,9 +28,15 @@ public class Instruction extends BoxGameItem implements KeyListener {
      */
     private boolean instructionIsDiplayed = true;
 
-    public Instruction(PacMan game) {
-        super(game, "images/Diverse/departureInstructions", 225, 280);
+    /**
+     * Attribut contenant le nom du fichier de l'instruction
+     */
+    private String instructionName;
+    
+    public Instruction(PacMan game, String sprite) {
+        super(game, sprite, 225, 280);
         this.game = game;
+        this.instructionName = sprite;
     }
 
     @Override
@@ -38,8 +44,18 @@ public class Instruction extends BoxGameItem implements KeyListener {
         
         // est vrai 1 fois sur 20 afin de reduire la vitesse d'exécution
         if (count % 20 == 0) {
-            // on fait clignoter l'instruction
-            flickerInstruction();
+            
+            // si c'est l'instruction est l'instruction de départ ("pressez entrée")
+            // on la fait clignoter
+            if (this.instructionName.equals("images/Diverse/departureInstructions")) {
+                flickerInstruction();
+            }
+            
+            // si l'instruction est "nouvelle chance" et que count vaut 120 (càd que quelques secondes se sont écoulées)
+            // on chance l'instruction en ("pressez entrée")
+            if (this.instructionName.equals("images/Diverse/newChance") && count == 80) {
+                this.instructionName = "images/Diverse/departureInstructions";
+            }
         }
         count++;
     }
@@ -52,7 +68,7 @@ public class Instruction extends BoxGameItem implements KeyListener {
             changeSprite("images/Squares/empty");
             this.instructionIsDiplayed = false;
         } else {
-            changeSprite("images/Diverse/departureInstructions");
+            changeSprite(this.instructionName);
             this.instructionIsDiplayed = true;
         }
     }
@@ -64,6 +80,7 @@ public class Instruction extends BoxGameItem implements KeyListener {
 
     @Override 
     public void keyReleased(KeyEvent e) {
+        // si l'utilisateur appuie sur la touche entrée, on enlève l'instruction
         if(e.getKeyCode() == KeyEvent.VK_ENTER) {
             game.remove(this);
         }
