@@ -151,8 +151,6 @@ public class Score extends GameItem {
         for (Score scoreItem : this.listDeltaItems) {
             game.remove(scoreItem);
         }
-        
-
     }
         
     /**
@@ -224,6 +222,10 @@ public class Score extends GameItem {
         }
     }
     
+    public void displayFinalScore() {
+        
+    }
+    
     @Override public boolean isCollide(GameItem gi) {return false;}
     @Override public void collideEffect(GameItem gi) {}
     @Override public void evolve(long l) {}
@@ -236,4 +238,9 @@ public class Score extends GameItem {
     public int getScore() {
         return score;
     }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
 }

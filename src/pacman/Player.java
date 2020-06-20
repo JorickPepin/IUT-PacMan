@@ -8,6 +8,7 @@ import iut.BoxGameItem;
 import iut.GameItem;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import square.Square;
 
 /**
@@ -88,6 +89,8 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private boolean isImmobilize = false;
     
+    private boolean exit = false;
+    
     /**
      * Constructeur du joueur
      * @param pacman
@@ -123,6 +126,10 @@ public class Player extends BoxGameItem implements KeyListener {
       
         // si le joueur a appuyé sur "entrée" on fait avancer le pacman
         if (enterHasBeenPressed && !isImmobilize) {
+
+            if (exit) {
+                System.exit(0);
+            }
 
             // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
             // il faut le déplacer de l'autre côté
@@ -408,8 +415,6 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private void restartGame() {
         
-        this.objLife.removeALife();
-        
         // paramètres de départ
         this.direction = "right";
         this.changeSprite("images/Pacman/pacmanright");
@@ -435,6 +440,23 @@ public class Player extends BoxGameItem implements KeyListener {
         
         // l'utilisateur doit de nouveau presser entrée
         this.enterHasBeenPressed = false;
+        
+        // on enlève une vie au joueur
+        this.objLife.removeALife();
+        
+        if (objLife.getNbLives() == 1) {
+            endOfTheGame(newChance);
+        }
+    }
+    
+    private void endOfTheGame(Instruction instruction)  {
+        game.remove(instruction);
+        
+        Instruction reStart = new Instruction(game, "images/Diverse/gameOver", 0, 0);
+        game.addItem(reStart);
+        
+        exit = true;
+      
     }
     
     @Override

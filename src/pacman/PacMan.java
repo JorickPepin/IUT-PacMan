@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 public class PacMan extends Game {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        
         // création du jeu
         game = new PacMan();
         
@@ -36,7 +35,7 @@ public class PacMan extends Game {
     public PacMan() {
         super(700,560,"Pac-man");          
     }
-    
+     
     /**
      * Attribut représentant le joueur (il est représenté par pacman)
      */
@@ -92,12 +91,6 @@ public class PacMan extends Game {
         // création du fantôme rose
         Pinky pinky = new Pinky(game);
         addGhost(pinky);
-    }
-
-    public void isLost() {
-        Instruction reStart = new Instruction(game, "images/Diverse/gameOver", 0, 0);
-        game.addItem(reStart);
-
     }
     
     @Override protected void lost() {}

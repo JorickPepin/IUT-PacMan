@@ -11,8 +11,7 @@ import pacman.PacMan;
  */
 public class Life extends GameItem {
 
-    private int nbLives = 2;
-    private Instruction instruction;
+    private int nbLives;
     private final PacMan game;
     
     /**
@@ -23,9 +22,10 @@ public class Life extends GameItem {
      * @param y  = ordonnée
      */
     public Life(PacMan g, String name, int x, int y) {
-        super(g, name, x, y);  
+        super(g, name, x, y);   
         
         this.game = g;
+        this.nbLives = 2; // 2 vies au départ
     }
 
     /**
@@ -34,13 +34,9 @@ public class Life extends GameItem {
     public void removeALife() {
 
         this.nbLives--;
-
-        // il reste une vie au joueur
-        if (nbLives == 1) {
-//            this.changeSprite("images/Lives/1");
-game.isLost();
-        } else if (nbLives == -1) { // le joueur a perdu
-            game.isLost();
+      
+        if (nbLives == 1) { // il reste une vie au joueur
+            this.changeSprite("images/Lives/1");
         } else { // le joeur n'a plus de vie
             game.remove(this);
         }
