@@ -447,6 +447,7 @@ public class Player extends BoxGameItem implements KeyListener {
         if (objLife.getNbLives() == 1) {
             endOfTheGame(newChance);
         }
+        
     }
     
     private void endOfTheGame(Instruction instruction)  {
@@ -454,6 +455,8 @@ public class Player extends BoxGameItem implements KeyListener {
         
         Instruction reStart = new Instruction(game, "images/Diverse/gameOver", 0, 0);
         game.addItem(reStart);
+        
+        objScore.displayFinalScore();
         
         exit = true;
       

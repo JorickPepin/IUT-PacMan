@@ -72,8 +72,9 @@ public class Score extends GameItem {
          
         // on enlève le +[nbPoints] à côté du joueur
         cleanDeltaItemsList();
+        
         // on "nettoie" pour enlever le score présent afin de mettre le nouveau
-//        cleanScoreItemsList(); 
+        cleanScoreItemsList(); 
         
         // le score vaut le score actuel + le nombre de points obtenus lors
         // de la dernière action
@@ -223,7 +224,33 @@ public class Score extends GameItem {
     }
     
     public void displayFinalScore() {
+        // variable représentant l'abscisse des caractères 
+        int x = 355;
         
+        // variable représentant l'index des éléments du tableau listScoreItems
+        int scoreItem = 0;
+        
+        // on transforme le score en chaîne de caractères pour pouvoir "balayer" dedans (= récupérer chaque chiffre)
+        String s = valueOf(score);
+        
+        // la liste dépend de la taille du score
+        // si le score est 20, la liste contient 2 éléments
+        // si le score est 200, la liste contient 3 éléments
+        listScoreItems = new Score[s.length()];
+        
+        // on "balaie" dans le score et récupère chaque chiffre
+        for (char c : s.toCharArray()) {
+            // dans notre liste, on ajoute le nouveau chiffre
+            // c - '0' pour récupérer la valeur entière du caractère (ex : '9' - '0' = 9)
+            // pour c=9, on ajoute le sprite filesNames[9] càd Score/9
+            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 377);
+            game.addItem(listScoreItems[scoreItem]);
+
+            // on incrémente l'abscisse pour que le chiffre d'après soit décalé
+            x += 8;
+            
+            scoreItem++;
+        }
     }
     
     @Override public boolean isCollide(GameItem gi) {return false;}

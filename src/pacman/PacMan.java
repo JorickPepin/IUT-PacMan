@@ -33,7 +33,7 @@ public class PacMan extends Game {
     }
     
     public PacMan() {
-        super(700,560,"Pac-man");          
+        super(700,560,"Pac-Man");          
     }
      
     /**
