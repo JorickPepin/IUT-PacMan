@@ -491,6 +491,11 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
             this.enterHasBeenPressed = true;
         }
     }
+
+    public void setSquares(Square[][] squares) {
+        this.squares = squares;
+    }
+    
     
     /**
      * Méthode abstraite permettant d'obtenir le nom du fantôme

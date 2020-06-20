@@ -50,32 +50,38 @@ public class PacMan extends Game {
     
     private static PacMan game;
     
+    public boolean hasPlayer = false;
+    
     @Override
     protected void drawBackground(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(00, 0, getWidth(), getHeight()); 
     }
 
+    private Score labelScore;
+    
     @Override
-    protected void createItems() {
+    public void createItems() {
 
         // ajout du label de score
-        Score labelScore = new Score(game, "images/Score/labelScore", 25, 5);
+        labelScore = new Score(game, "images/Score/labelScore", 25, 5);
         game.addItem(labelScore); 
 
         // ajout du label du nombre de vies
         Life labelLife = new Life(this, "images/Lives/labelLives", 25, 540);
         game.addItem(labelLife);
-        
+    
         Instruction instruction = new Instruction(game, "images/Diverse/departureInstruction", 225, 280);
         game.addItem(instruction);
 
-        // création du joueur 
-        // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
-        player = new Player(this, 336, 392);
-        game.addItem(player);
-        player.setSquares(map.getSquares());
-        
+        if (!hasPlayer) {
+            // création du joueur 
+            // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
+            player = new Player(this, map, 336, 392);
+            game.addItem(player);
+            hasPlayer=true;
+        }
+
         // création du fantôme orange
         Clyde clyde = new Clyde(game);
         addGhost(clyde);
@@ -91,6 +97,10 @@ public class PacMan extends Game {
         // création du fantôme rose
         Pinky pinky = new Pinky(game);
         addGhost(pinky);
+    }
+    
+    public void initItems() {
+        game.addItem(this.labelScore);
     }
     
     @Override protected void lost() {}

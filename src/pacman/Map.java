@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import square.Square;
 import java.util.List;
+import javax.swing.JOptionPane;
 import square.EmptySquare;
 import square.FullSquare;
 
@@ -62,21 +63,38 @@ public class Map {
     private final Graph graph;
     
     /**
+     * Attribut contenant le nombre de gommes qu'il y a sur la map
+     */
+    private int gommeNumber;
+    
+    private Game game;
+    
+    /**
      * Constructeur de la map
      * @param g = le jeu
-     * @throws IOException si le fichier n'est pas trouvé
      */
-    public Map(Game g) throws IOException {
+    public Map(Game g) {
+        
+        this.gommeNumber = 0;
+        
+        this.game = g;
         
         // initialisation des listes
-        squareToNode = new HashMap<>();
-        nodeToSquare = new HashMap<>();
+        this.squareToNode = new HashMap<>();
+        this.nodeToSquare = new HashMap<>();
         
         // initialisation du tableau avec le nombre de lignes et colonnes
         this.squares = new Square[NB_ROWS][NB_COLS];
         
+        List<String> lines = null;
+        
         // la map est "écrite" avec un fichier .map qu'on récupère ici
-        List<String> lines = Files.readAllLines(Paths.get("ressources/map.map"));
+        try {
+            lines = Files.readAllLines(Paths.get("ressources/map.map"));
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Fichier .map non trouvé", "Fichier manquant", JOptionPane.ERROR_MESSAGE);
+        }
+        
         
         // on "balaie" le fichier .map (qui est un simple fichier texte)
         // et on récupère le caractère correspond à la case
@@ -248,8 +266,10 @@ public class Map {
                         squares[i][j].changeSprite("images/Squares/fullDoubleJoin8");
                         break;
                     default:
-                        // si le caractère est 0, alors la case est vide avec un petit point (cas général par défaut)
+                        // si le caractère est 0, alors la case est vide avec une gomme (cas général par défaut)
                         squares[i][j] = new EmptySquare(g, i, j);
+                        
+                        gommeNumber += 1;
                         
                         // case vide donc ajoutée au graphe
                         nodeToSquare.put(countNode, squares[i][j]);
@@ -284,9 +304,9 @@ public class Map {
         }
         
         // on applique l'agorithme de Floyd-Warshall à notre graphe
-        graph.floydWarshall();        
+        graph.floydWarshall();
     }
-
+      
     @Override
     public String toString() {return "";}
 
@@ -313,6 +333,12 @@ public class Map {
     public java.util.Map<Square, Integer> getSquareToNode() {
         return squareToNode;
     }
-    
-    
+
+    public int getGommeNumber() {
+        return gommeNumber;
+    }
+
+    public void setGommeNumber(int gommeNumber) {
+        this.gommeNumber = gommeNumber;
+    }
 }

@@ -39,18 +39,13 @@ public class Life extends GameItem {
             this.changeSprite("images/Lives/1");
         } else { // le joeur n'a plus de vie
             game.remove(this);
-        }
-        
-        
+        }     
     }
     
     public int getNbLives() {
         return nbLives;
     }
         
-    
-    
-    
     @Override public boolean isCollide(GameItem gi) {return false;}
     @Override public void collideEffect(GameItem gi) {}
     @Override public String getItemType() {return "Life";}
