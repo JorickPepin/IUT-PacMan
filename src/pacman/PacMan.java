@@ -34,7 +34,7 @@ public class PacMan extends Game {
     }
     
     public PacMan() {
-        super(700,560,"Pac-man");
+        super(700,560,"Pac-man");          
     }
     
     /**
@@ -51,8 +51,6 @@ public class PacMan extends Game {
     
     private static PacMan game;
     
-//    private boolean enterIsPressed = false;
-    
     @Override
     protected void drawBackground(Graphics g) {
         g.setColor(Color.BLACK);
@@ -62,23 +60,23 @@ public class PacMan extends Game {
     @Override
     protected void createItems() {
 
+        // ajout du label de score
+        Score labelScore = new Score(game, "images/Score/labelScore", 25, 5);
+        game.addItem(labelScore); 
+
+        // ajout du label du nombre de vies
+        Life labelLife = new Life(this, "images/Lives/labelLives", 25, 540);
+        game.addItem(labelLife);
+        
+        Instruction instruction = new Instruction(game, "images/Diverse/departureInstruction", 225, 280);
+        game.addItem(instruction);
+
         // création du joueur 
         // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
         player = new Player(this, 336, 392);
         game.addItem(player);
         player.setSquares(map.getSquares());
-
-        // ajout du label de score
-        Score labelScore = new Score(game, "images/Score/labelScore", 10, 8);
-        game.addItem(labelScore); 
-
-        // ajout du label du nombre de vies
-        Life labelLife = new Life(game, "images/Lives/labelLives", 10, 540);
-        game.addItem(labelLife);
         
-        Instruction departureInstruction = new Instruction(game, "images/Diverse/departureInstructions");
-        game.addItem(departureInstruction);
-
         // création du fantôme orange
         Clyde clyde = new Clyde(game);
         addGhost(clyde);
@@ -96,33 +94,16 @@ public class PacMan extends Game {
         addGhost(pinky);
     }
 
-    @Override
-    protected void lost() {
-        JOptionPane.showMessageDialog(this, "Vous avez perdu");
-    }
+    public void isLost() {
+        Instruction reStart = new Instruction(game, "images/Diverse/gameOver", 0, 0);
+        game.addItem(reStart);
 
-    @Override
-    protected void win() {}
-
-    /**
-     * /!\ Méthode non codée
-     * @return 
-     */
-    @Override
-    protected boolean isPlayerWin() {
-        return false;
     }
-     
-    /**
-     * /!\ Méthode non codée
-     * @return 
-     */
-    @Override
-    protected boolean isPlayerLost() {
-        return false; 
-    }
-
-    // gravité non utilisée dans ce jeu
+    
+    @Override protected void lost() {}
+    @Override protected void win() {}
+    @Override protected boolean isPlayerWin() {return false;}
+    @Override protected boolean isPlayerLost() {return false;}
     @Override public Vector getGravity() {return new Vector();}
     
     public void addGhost(Ghost ghost) {

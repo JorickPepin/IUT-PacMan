@@ -88,7 +88,6 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private boolean isImmobilize = false;
     
-    private int test = 0;
     /**
      * Constructeur du joueur
      * @param pacman
@@ -105,7 +104,7 @@ public class Player extends BoxGameItem implements KeyListener {
         this.game = pacman;
         
         // au départ, on a 2 vies
-        this.objLife = new Life(game, "images/Lives/2", 58, 540);
+        this.objLife = new Life(game, "images/Lives/2", 73, 541);
         game.addItem(this.objLife);
 
         // initialisation d'un object Score 
@@ -115,13 +114,13 @@ public class Player extends BoxGameItem implements KeyListener {
     @Override
     public void evolve(long l) {
 
-            // si pacman passe sur une case contenant un petit point ou un gros, 
+        // si pacman passe sur une case contenant une pac-gomme ou une super pac-gomme, 
         // alors on change la case et on incrémente le score
         if (("emptyWithPoint".equals(squares[i][j].getItemType()))
                 || ("emptyWithBigPoint".equals(squares[i][j].getItemType()))) {
             changeSquare();
         }
-
+      
         // si le joueur a appuyé sur "entrée" on fait avancer le pacman
         if (enterHasBeenPressed && !isImmobilize) {
 
@@ -177,7 +176,6 @@ public class Player extends BoxGameItem implements KeyListener {
                 // on change l'image du pacman
                 changePacmanSprite(pacmanSpriteName);
 
-//            if (count % (SPEED*40) == 0)
                 this.objScore.cleanDeltaItemsList();
             }
             count++;
@@ -276,13 +274,9 @@ public class Player extends BoxGameItem implements KeyListener {
                 });
                 break;
         }
-         
+
         // on fixe le type de la nouvelle case à vide
         this.squares[i][j].setItemType("empty");
-    }
-
-    public void setSquares(Square[][] squares) {
-        this.squares = squares;
     }
 
     /**
@@ -312,27 +306,30 @@ public class Player extends BoxGameItem implements KeyListener {
         // le fantôme meurt
         g.die();
 
+        int score = 0;
+        
         // suivant le nombre de fantômes restant, le nombre de points gagnés
         // n'est pas le même
         switch (game.getGhostsList().size()) {
             case 4:
                 // on ajoute 200 points au joueur  
-                this.objScore.addPoints(200, this.i, this.j, this.direction);
+                score += 200;
                 break;
             case 3:
                 // on ajoute 400 points au joueur  
-                this.objScore.addPoints(400, this.i, this.j, this.direction);
+                score += 400;
                 break;
             case 2:
                 // on ajoute 800 points au joueur  
-                this.objScore.addPoints(800, this.i, this.j, this.direction);
+                score += 800;
                 break;
             case 1:
                 // on ajoute 1600 points au joueur  
-                this.objScore.addPoints(1600, this.i, this.j, this.direction);
+                score += 1600;
                 break;
         }
-
+        
+        this.objScore.addPoints(score, this.i, this.j, this.direction);
     }
     
     /**
@@ -355,9 +352,6 @@ public class Player extends BoxGameItem implements KeyListener {
 
             // on lance l'audio correspondant à la mort de pacman
             new Audio("sons/pacman_death").start();
-
-            // on enlève une vie
-//            this.objLife.removeALife(); // a fixer
         }
 
         if (time == 5) {
@@ -414,6 +408,8 @@ public class Player extends BoxGameItem implements KeyListener {
     
     private void restartGame() {
         
+        this.objLife.removeALife();
+        
         // paramètres de départ
         this.direction = "right";
         this.changeSprite("images/Pacman/pacmanright");
@@ -429,12 +425,12 @@ public class Player extends BoxGameItem implements KeyListener {
         for(Ghost g : game.getGhostsList()) {
             g.initGhost();
         }
-        
+         
         // on affiche le message "Nouvelle chancce"
-        Instruction departureInstruction = new Instruction(game, "images/Diverse/newChance");
-        game.addItem(departureInstruction);
+        Instruction newChance = new Instruction(game, "images/Diverse/newChance", 225, 280);
+        game.addItem(newChance);
         
-        // pacman  n'est plus immobilisé
+        // pacman n'est plus immobilisé
         this.isImmobilize = false;
         
         // l'utilisateur doit de nouveau presser entrée
@@ -477,6 +473,10 @@ public class Player extends BoxGameItem implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_ENTER) {
             this.enterHasBeenPressed = true;
         }
+    }
+    
+    public void setSquares(Square[][] squares) {
+        this.squares = squares;
     }
     
     @Override

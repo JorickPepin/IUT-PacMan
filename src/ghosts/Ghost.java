@@ -482,7 +482,7 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
             Ghost.speed = 20;    // il avance plus lentement
         } else {
             Ghost.speed = 10;    // sinon il est à sa vitesse normale
-        }
+        }     
     }
     
     @Override 

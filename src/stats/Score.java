@@ -69,19 +69,18 @@ public class Score extends GameItem {
      * @param direction = la direction du joueur
      */
     public void addPoints(int nbPoints, int i, int j, String direction) {
-        
+         
         // on enlève le +[nbPoints] à côté du joueur
         cleanDeltaItemsList();
-                
         // on "nettoie" pour enlever le score présent afin de mettre le nouveau
-        cleanScoreItemsList(); 
+//        cleanScoreItemsList(); 
         
         // le score vaut le score actuel + le nombre de points obtenus lors
         // de la dernière action
         this.score += nbPoints;
         
         // variable représentant l'abscisse des caractères 
-        int x = 63;
+        int x = 78;
         
         // variable représentant l'index des éléments du tableau listScoreItems
         int scoreItem = 0;
@@ -99,7 +98,7 @@ public class Score extends GameItem {
             // dans notre liste, on ajoute le nouveau chiffre
             // c - '0' pour récupérer la valeur entière du caractère (ex : '9' - '0' = 9)
             // pour c=9, on ajoute le sprite filesNames[9] càd Score/9
-            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 8);
+            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 6);
             game.addItem(listScoreItems[scoreItem]);
 
             // on incrémente l'abscisse pour que le chiffre d'après soit décalé
@@ -139,8 +138,8 @@ public class Score extends GameItem {
      */
     private void cleanScoreItemsList() {
         
-        for (Score ScoreItem : this.listScoreItems) {
-            game.remove(ScoreItem);
+        for (Score scoreItem : this.listScoreItems) {
+            game.remove(scoreItem);
         }
     }
     
@@ -148,10 +147,12 @@ public class Score extends GameItem {
      * Méthode permettant d'enlever le +[nbPoints] à côté du joueur
      */
     public void cleanDeltaItemsList() {
-        
-        for (Score ScoreItem : this.listDeltaItems) {
-            game.remove(ScoreItem);
+       
+        for (Score scoreItem : this.listDeltaItems) {
+            game.remove(scoreItem);
         }
+        
+
     }
         
     /**

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import square.Square;
 import java.util.List;
-import java.util.stream.Collectors;
 import square.EmptySquare;
 import square.FullSquare;
 
@@ -119,7 +118,7 @@ public class Map {
                     // tous les caractères suivants n'ont pas de lien avec la case qu'ils créent
                     // ils servent à remplacer les murs par des images correspondant au jeu originel
                     // pour savoir à quelle image correspond le caractère,
-                    // il faut se référer au fichier .map et aux images créées pour ce faire
+                    // il faut se référer au fichier .map et aux images créées dans les ressources
                     // un caractère correspond à un type de case (angle, trait droit, ...)
                     // et donc à une image précise, c'est pour cela qu'il y en a autant
                         

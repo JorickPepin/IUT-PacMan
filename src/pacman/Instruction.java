@@ -1,7 +1,6 @@
 
 package pacman;
 
-import iut.Audio;
 import iut.BoxGameItem;
 import iut.GameItem;
 import java.awt.event.KeyEvent;
@@ -33,8 +32,8 @@ public class Instruction extends BoxGameItem implements KeyListener {
      */
     private String instructionName;
     
-    public Instruction(PacMan game, String sprite) {
-        super(game, sprite, 225, 280);
+    public Instruction(PacMan game, String sprite, int x, int y) {
+        super(game, sprite, x , y);
         this.game = game;
         this.instructionName = sprite;
     }
@@ -47,14 +46,14 @@ public class Instruction extends BoxGameItem implements KeyListener {
             
             // si c'est l'instruction est l'instruction de départ ("pressez entrée")
             // on la fait clignoter
-            if (this.instructionName.equals("images/Diverse/departureInstructions")) {
+            if (this.instructionName.equals("images/Diverse/departureInstruction")) {
                 flickerInstruction();
             }
             
             // si l'instruction est "nouvelle chance" et que count vaut 120 (càd que quelques secondes se sont écoulées)
             // on chance l'instruction en ("pressez entrée")
             if (this.instructionName.equals("images/Diverse/newChance") && count == 80) {
-                this.instructionName = "images/Diverse/departureInstructions";
+                this.instructionName = "images/Diverse/departureInstruction";
             }
         }
         count++;
