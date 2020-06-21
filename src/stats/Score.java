@@ -247,7 +247,7 @@ public class Score extends GameItem {
             // dans notre liste, on ajoute le nouveau chiffre
             // c - '0' pour récupérer la valeur entière du caractère (ex : '9' - '0' = 9)
             // pour c=9, on ajoute le sprite filesNames[9] càd Score/9
-            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 377);
+            listScoreItems[scoreItem] = new Score(game, filesNames[c - '0'], x, 379);
             game.addItem(listScoreItems[scoreItem]);
 
             // on incrémente l'abscisse pour que le chiffre d'après soit décalé
