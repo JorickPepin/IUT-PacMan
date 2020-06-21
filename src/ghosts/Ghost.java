@@ -14,7 +14,6 @@ import square.Square;
 
 /**
  * Classe abstraite représentant un fantôme
- * Chaque fantôme possède des caractéristiques différentes (apparence, déplacements, ...)
  * @author Jorick
  */
 public abstract class Ghost extends BoxGameItem implements KeyListener {
@@ -95,8 +94,14 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
      */
     protected boolean enterHasBeenPressed = false;
     
+    /**
+     * Booleen permettant de savoir si le fantôme est immobilisé ou non
+     */
     protected boolean isImmobilize = false;
     
+    /**
+     * Booleen permettant de savoir si le fantôme est en colision avec pacman
+     */
     private boolean collisionWithPacman = false;
     
     /**
@@ -165,19 +170,19 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
      * @param time = le temps qui s'est écoulé depuis qu'il est vulnérable
      */
     protected void setTheVunerableGhost(int time) {
-
+         
         // si le compteur est supérieur à 30, on fait clignoter 
         // le fantôme pour avertir le joueur que c'est bientôt fini
-        if (time > 30) {
+        if (time > 11) {
             this.changeSpriteVulnerableGhost();
         }
         
         // si le compteur est égal à 40 (~ 10sec), le fantôme
         // n'est plus vulnérable
-        if (time == 40) {
+        if (time == 16) {
             this.becomeVulnerable(false);
             this.time = 0;
-        }
+        }  
     }
     
     /**
@@ -247,7 +252,7 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
             case "Inky":
                 origine = map.getSquareToNode().get(map.getSquares()[7][12]);
                 break;
-            case "Blinky":
+            case "Blinky": 
                 origine = map.getSquareToNode().get(map.getSquares()[8][11]);
                 break;
             case "Pinky":
@@ -319,6 +324,9 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         this.getPosition().setY(196);
     }
     
+    /**
+     * Méthode permettant de changer le sprite du fantôme avec celui qu'il a d'origine
+     */
     public void setOriginalSprite() {
         this.changeSprite(this.getOrigineSprite());
     }
@@ -445,6 +453,9 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         return this.isVulnerable;
     }
         
+    /**
+     * Méthode permettant d'immobiliser un fantôme
+     */
     public void isImmobilize() {
         this.isImmobilize = true;
     }
@@ -487,16 +498,11 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
     
     @Override 
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-            this.enterHasBeenPressed = true;
+        if(e.getKeyCode() == KeyEvent.VK_ENTER && !game.isOver()) {
+            this.enterHasBeenPressed = true; 
         }
     }
 
-    public void setSquares(Square[][] squares) {
-        this.squares = squares;
-    }
-    
-    
     /**
      * Méthode abstraite permettant d'obtenir le nom du fantôme
      * @return le nom du fantôme (Clyde, Inky, ...)

@@ -4,9 +4,6 @@ import pacman.PacMan;
 
 /**
  * Clyde est le fantôme orange 
- * Ses déplacements sont les suivants : 
- * "Clyde feint l'indifférence. De temps en temps, il choisit une direction au hasard."
- *
  * @author Jorick
  */ 
 public class Clyde extends Ghost {

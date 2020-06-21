@@ -3,7 +3,6 @@ package square;
 
 import iut.BoxGameItem;
 import iut.Game;
-import java.awt.Graphics;
 
 /**
  * Classe abstraite représentant une case
@@ -28,12 +27,19 @@ public abstract class Square extends BoxGameItem {
         g.addItem(this);
     }
 
+    /**
+     * Méthode permettant de récupérer le type de la case
+     * @return le type de la case
+     */
     public abstract String getItemType();
     
+    /**
+     * Méthode permettant de fixer le type de la case
+     * @param type = le type de la case
+     */
     public abstract void setItemType(String type);
     
-    @Override
-    public void evolve(long l) {}
+    @Override public void evolve(long l) {}
 
     @Override
     public void changeSprite(String name) {
@@ -48,5 +54,10 @@ public abstract class Square extends BoxGameItem {
         return j;
     } 
     
+    /**
+     * Simple type = empty ou full
+     * (empty pouvant être emptyWithPoint ou emptyWithBigPoint)
+     * @return 
+     */
     public abstract String getSimpleType();
 }

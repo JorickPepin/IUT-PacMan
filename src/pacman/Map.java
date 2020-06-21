@@ -67,8 +67,6 @@ public class Map {
      */
     private int gommeNumber;
     
-    private Game game;
-    
     /**
      * Constructeur de la map
      * @param g = le jeu
@@ -76,8 +74,6 @@ public class Map {
     public Map(Game g) {
         
         this.gommeNumber = 0;
-        
-        this.game = g;
         
         // initialisation des listes
         this.squareToNode = new HashMap<>();
@@ -94,7 +90,6 @@ public class Map {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Fichier .map non trouvé", "Fichier manquant", JOptionPane.ERROR_MESSAGE);
         }
-        
         
         // on "balaie" le fichier .map (qui est un simple fichier texte)
         // et on récupère le caractère correspond à la case
@@ -269,7 +264,7 @@ public class Map {
                         // si le caractère est 0, alors la case est vide avec une gomme (cas général par défaut)
                         squares[i][j] = new EmptySquare(g, i, j);
                         
-                        gommeNumber += 1;
+                        gommeNumber += 1; // on ajoute une gomme au nombre de gommes
                         
                         // case vide donc ajoutée au graphe
                         nodeToSquare.put(countNode, squares[i][j]);
@@ -303,7 +298,7 @@ public class Map {
             }
         }
         
-        // on applique l'agorithme de Floyd-Warshall à notre graphe
+        // on applique l'algorithme de Floyd-Warshall à notre graphe
         graph.floydWarshall();
     }
       
@@ -314,14 +309,6 @@ public class Map {
         return squares;
     }
     
-    public void addGhost(Ghost ghost) {
-        this.ghostsList.add(ghost); 
-    }
-
-    public ArrayList<Ghost> getGhostsList() {
-        return ghostsList;
-    }
-
     public Graph getGraph() {
         return graph;
     }

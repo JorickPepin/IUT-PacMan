@@ -12,17 +12,15 @@ import iut.Game;
 import iut.Vector;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 /**
- *
+ * Classe principale du jeu
  * @author Jorick
  */
 public class PacMan extends Game {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         // création du jeu
         game = new PacMan();
         
@@ -46,25 +44,34 @@ public class PacMan extends Game {
      */
     private static Map map; 
     
+    /**
+     * Attribut contenant la liste des fantômes du jeu
+     */
     private final ArrayList<Ghost> ghostsList = new ArrayList();
     
     private static PacMan game;
     
-    public boolean hasPlayer = false;
+    /**
+     * Booleen permettant de savoir si un joueur est déjà présent ou non
+     */
+    private boolean hasPlayer = false;
+    
+    /**
+     * Booleen permettant de savoir si la partie est terminée
+     */
+    private boolean isOver = false;
     
     @Override
     protected void drawBackground(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(00, 0, getWidth(), getHeight()); 
     }
-
-    private Score labelScore;
-    
+ 
     @Override
     public void createItems() {
 
         // ajout du label de score
-        labelScore = new Score(game, "images/Score/labelScore", 25, 5);
+        Score labelScore = new Score(game, "images/Score/labelScore", 25, 5);
         game.addItem(labelScore); 
 
         // ajout du label du nombre de vies
@@ -74,11 +81,12 @@ public class PacMan extends Game {
         Instruction instruction = new Instruction(game, "images/Diverse/departureInstruction", 225, 280);
         game.addItem(instruction);
 
-        if (!hasPlayer) {
+        if (!hasPlayer) { // si le joueur n'a pas déjà été créé
             // création du joueur 
             // (position de départ sur les cases (x=12, y=14) = (12 * 28, 14 * 28) en pixels)
             player = new Player(this, map, 336, 392);
             game.addItem(player);
+            
             hasPlayer=true;
         }
 
@@ -98,16 +106,14 @@ public class PacMan extends Game {
         Pinky pinky = new Pinky(game);
         addGhost(pinky);
     }
-    
-    public void initItems() {
-        game.addItem(this.labelScore);
+     
+    public boolean isOver() {
+        return this.isOver;
     }
     
-    @Override protected void lost() {}
-    @Override protected void win() {}
-    @Override protected boolean isPlayerWin() {return false;}
-    @Override protected boolean isPlayerLost() {return false;}
-    @Override public Vector getGravity() {return new Vector();}
+    public void over(boolean isOver) {
+        this.isOver = isOver;
+    }
     
     public void addGhost(Ghost ghost) {
         this.ghostsList.add(ghost); 
@@ -120,6 +126,10 @@ public class PacMan extends Game {
     public ArrayList<Ghost> getGhostsList() {
         return ghostsList;
     } 
+    
+    public void removeAllGhosts() {
+        this.ghostsList.clear();
+    }
 
     public static Map getMap() {
         return map;
@@ -128,4 +138,10 @@ public class PacMan extends Game {
     public Player getPlayer() {
         return player;
     }
+     
+    @Override protected void lost() {}
+    @Override protected void win() {}
+    @Override protected boolean isPlayerWin() {return false;}
+    @Override public boolean isPlayerLost() {return false;}
+    @Override public Vector getGravity() {return new Vector();}
 }

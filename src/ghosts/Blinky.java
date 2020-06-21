@@ -5,18 +5,10 @@ import pacman.PacMan;
 
 /**
  * Blinky est le fantôme bleu
- * Ses déplacements sont les suivants :
- * "Blinky attaque directement Pac Man. Il suit Pac-Man comme son ombre."
  * @author Jorick
  */
 public class Blinky extends Ghost {
-
-    /**
-     * Compteur pour savoi si le fantôme peut quitter le spawn ou non
-     * Blinky doit le quitter après environ 5 secondes
-     */
-//    private int isReadyToGo = 0;
-             
+   
     /**
      * Constructeur de Blinky (fantôme bleu)
      * @param game = le jeu

@@ -6,7 +6,7 @@ import static java.lang.String.valueOf;
 import pacman.PacMan;
 
 /**
- *
+ * Classe contenant la gestion du score du joueur
  * @author Jorick
  */
 public class Score extends GameItem {
@@ -105,6 +105,7 @@ public class Score extends GameItem {
             // on incrémente l'abscisse pour que le chiffre d'après soit décalé
             x += 8;
             
+            // item suivant
             scoreItem++;
         }
         
@@ -223,6 +224,9 @@ public class Score extends GameItem {
         }
     }
     
+    /**
+     * Méthode permettant d'afficher le score final du joueur
+     */
     public void displayFinalScore() {
         // variable représentant l'abscisse des caractères 
         int x = 355;
@@ -249,6 +253,7 @@ public class Score extends GameItem {
             // on incrémente l'abscisse pour que le chiffre d'après soit décalé
             x += 8;
             
+            // item suivant
             scoreItem++;
         }
     }
@@ -269,5 +274,4 @@ public class Score extends GameItem {
     public void setScore(int score) {
         this.score = score;
     }
-
 }

@@ -8,14 +8,10 @@ import iut.BoxGameItem;
 import iut.GameItem;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import square.Square;
 
 /**
- * Classe représentant le player (pacman)
+ * Classe représentant le joueur (pacman)
  * @author Jorick
  */
 public class Player extends BoxGameItem implements KeyListener {
@@ -90,21 +86,30 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private boolean enterHasBeenPressed = false;
     
+    /**
+     * Booleen permettant d'immobiliser le joueur
+     */
     private boolean isImmobilize = false;
     
+    /**
+     * Booleen permettant de savoir si le joueur souhaite quitter le jeu 
+     */
     private boolean exit = false;
     
     private Map map;
-
+    
     /**
      * Constructeur du joueur
      * @param pacman
+     * @param map
      * @param x = position de départ en abscisse
      * @param y = position de départ en ordonnée
      */
     public Player(PacMan pacman, Map map, int x, int y) {
         super(pacman, "images/Pacman/pacmanright", x, y);
 
+        new Audio("sons/pacman_beginning").start();
+        
         // voir attributs pour explication
         this.i = y / 28;
         this.j = x / 28;
@@ -132,20 +137,20 @@ public class Player extends BoxGameItem implements KeyListener {
             changeSquare();
         }
        
-        // s'il n'y a plus de gomme sur la map, on la réinitialise et on appelle
-        // restartGame() pour réinitialiser les persos
+        // s'il n'y a plus de gomme sur la map, on la réinitialise
         if (map.getGommeNumber() == 0) {
-            reinitialiseMap();
-            gotAllGums();
+            new Audio("sons/pacman_extrapac").start();
+            reinitialiseMap();   
+        }
+
+        // si l'utilisateur appuie sur échap, on ferme le jeu
+        if (exit) {
+            System.exit(0);
         }
 
         // si le joueur a appuyé sur "entrée" on fait avancer le pacman
         if (enterHasBeenPressed && !isImmobilize) {
             
-            if (exit) {
-                System.exit(0);
-            }
-
             // si pacman est sur la case à l'extrême gauche ou à l'extrême droite
             // il faut le déplacer de l'autre côté
             if (this.i == 9 && (this.j == 0 || this.j == 24)) {
@@ -198,6 +203,7 @@ public class Player extends BoxGameItem implements KeyListener {
                 // on change l'image du pacman
                 changePacmanSprite(pacmanSpriteName);
 
+                // on "nettoie" le score
                 this.objScore.cleanDeltaItemsList();
             }
             count++;
@@ -277,20 +283,20 @@ public class Player extends BoxGameItem implements KeyListener {
      * Mettant permettant de changer une case avec point en case vide
      */
     private void changeSquare() {
-        
-        // lance le fichier audio
-        new Audio("sons/pacman_chomp").start();
-        
+           
         // on remplace la case par une case vide
         this.squares[i][j].changeSprite("images/Squares/empty");
 
         // on regarde de quel type était la case
         switch (squares[i][j].getItemType()) {
-            case "emptyWithPoint": // case avec petit point
+            case "emptyWithPoint": // case avec petit point (pac-gomme)
+                new Audio("sons/pacman_chomp").start(); // audio correspondant
                 this.objScore.addPoints(10, this.i, this.j, this.direction); // on incrémente le score de 10
-                map.setGommeNumber(map.getGommeNumber() - 1);
+                map.setGommeNumber(map.getGommeNumber() - 1); // il y a une gomme en moins
                 break;
-            case "emptyWithBigPoint": // case avec gros point
+            case "emptyWithBigPoint": // case avec gros point (super pac-gomme)
+                new Audio("sons/pacman_eatfruit").start(); // audio pour avoir manger la gomme
+                new Audio("sons/pacman_power").start(); // audio pour avertir que les fantômes sont vulnérables
                 this.objScore.addPoints(50, this.i, this.j, this.direction); // on incrémente le score de 50
                 game.getGhostsList().forEach((g) -> {
                     g.becomeVulnerable(true); // les fantômes deviennent vulnérables
@@ -310,10 +316,10 @@ public class Player extends BoxGameItem implements KeyListener {
     public void collideWithGhost(Ghost g, int time) {
         
         if (g.isVulnerable()) { // si le fantôme est vulnérable
-            collideWithVulnerableGhost(g);
+            collideWithVulnerableGhost(g); // colision avec fantôme vulnérable
             
-        } else { // si le fantôme n'est pas vulnérable    
-            collideWithDangerGhost(time); 
+        } else { 
+            collideWithDangerGhost(time); // colision avec fantôme en vie 
         }
     } 
     
@@ -323,12 +329,14 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private void collideWithVulnerableGhost(Ghost g) {
 
+        new Audio("sons/pacman_eatghost").start();
+        
         // le fantôme meurt
         g.die();
 
         int score = 0;
         
-        // suivant le nombre de fantômes restant, le nombre de points gagnés
+        // suivant le nombre de fantômes en vie, le nombre de points gagnés
         // n'est pas le même
         switch (game.getGhostsList().size()) {
             case 4:
@@ -358,7 +366,7 @@ public class Player extends BoxGameItem implements KeyListener {
      */
     private void collideWithDangerGhost(int time) {
 
-        // on fait des tests sur time pour avoir des évènements de manière progressive
+        // on fait des tests sur time pour exécuter des évènements de manière progressive
         
         if (time == 0) {
 
@@ -431,12 +439,17 @@ public class Player extends BoxGameItem implements KeyListener {
             // on enlève une vie au joueur
             this.objLife.removeALife();
 
+            // l'utilisateur a utilisé toutes ses vies, on met fin à la partie
             if (objLife.getNbLives() == -1) {
                 endOfTheGame(newChance);
             }
         }
     }
     
+    /**
+     * Méthode à utiliser lorsque le joueur est entré en colision avec un
+     * fantôme et a perdu une vie
+     */
     private void restartGame() {
 
         // paramètres de départ
@@ -463,51 +476,54 @@ public class Player extends BoxGameItem implements KeyListener {
         
     }
     
-    private void gotAllGums() {
-        
-        // les fantômes aussi
-        for (Ghost g : game.getGhostsList()) {
-            g.initGhost();
-        }
-        
-        // paramètres de départ
-        this.direction = "right";
-        this.changeSprite("images/Pacman/pacmanright");
-        
-        // on positionne le joueur à la position initiale
-        this.getPosition().setX(336);
-        this.j = 336 / 28;
-        this.getPosition().setY(392);
-        this.i = 392 / 28;
-        
-        // l'utilisateur doit de nouveau presser entrée
-        this.enterHasBeenPressed = false;
-    }
-    
+    /**
+     * Méthode à utiliser lorsque le joueur est entré en colision et n'a plus
+     * de vie (fin du jeu)
+     * @param instruction 
+     */
     private void endOfTheGame(Instruction instruction)  {
+        
+        new Audio("sons/pacman_intermission").start();
+        
         game.remove(instruction);
+        this.isImmobilize = true;
         
         Instruction reStart = new Instruction(game, "images/Diverse/gameOver", 0, 0);
         game.addItem(reStart);
-        
+            
         objScore.displayFinalScore();
         
-        exit = true;
-  
+        game.over(true);   
     }
 
+    /**
+     * Méthode permettant de créer une nouvelle partie
+     */
+    private void newGame() {
+        reinitialiseMap();
+        objScore.setScore(0);
+        objLife.setNbLives(2);
+    }
+
+    /**
+     * Méthode permettant de remettre la map à 0
+     */
     private void reinitialiseMap() {
         
         game.remove(this);
-        for (Ghost g : this.map.getGhostsList()) {
+        
+        for (Ghost g : game.getGhostsList()) {
+            g.initGhost();
             game.remove(g);
         }
+        
+        game.removeAllGhosts();
         
         for (int i = 0; i < this.squares.length; ++i) {
             for (int j = 0; j < this.squares[i].length; ++j) {
                 game.remove(squares[i][j]);
             }
-        }
+        }    
         
         this.map = new Map(game);
         this.squares = map.getSquares();
@@ -522,6 +538,8 @@ public class Player extends BoxGameItem implements KeyListener {
         }
         
         game.addItem(this.objLife);
+        
+        restartGame();
     }
 
     @Override
@@ -557,8 +575,18 @@ public class Player extends BoxGameItem implements KeyListener {
     
     @Override 
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+        
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && !game.isOver()) {
             this.enterHasBeenPressed = true;
+        }
+        
+        if (game.isOver() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+            newGame();
+            game.over(false);
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.exit = true;
         }
     }
     

@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * Classe représentant l'instruction "pressez entrée" affichée au départ
+ * Classe représentant les différentes instructions données à l'utilisateur
  * 
  * @author Jorick
  */
@@ -34,6 +34,7 @@ public class Instruction extends BoxGameItem implements KeyListener {
     
     public Instruction(PacMan game, String sprite, int x, int y) {
         super(game, sprite, x , y);
+        
         this.game = game;
         this.instructionName = sprite;
     }
@@ -80,7 +81,7 @@ public class Instruction extends BoxGameItem implements KeyListener {
     @Override 
     public void keyReleased(KeyEvent e) {
         // si l'utilisateur appuie sur la touche entrée, on enlève l'instruction
-        if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER && !game.isOver()) {
             game.remove(this);
         }
     }

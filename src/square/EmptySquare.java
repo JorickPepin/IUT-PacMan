@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package square;
 
 import iut.Game;
@@ -15,6 +11,9 @@ import iut.GameItem;
  */
 public class EmptySquare extends Square {
     
+    /**
+     * Type de la case
+     */
     private String type = "emptyWithPoint";
     
     /**
@@ -38,11 +37,6 @@ public class EmptySquare extends Square {
         return this.type;
     }
     
-    @Override
-    public String toString() {
-        return "(" + getI() + ", " + getJ() + ")"; 
-    }
-
     @Override
     public void evolve(long l) {
         // est vrai 1 fois sur 20 afin de reduire la vitesse d'exécution
@@ -69,10 +63,8 @@ public class EmptySquare extends Square {
         }
     }
     
-    @Override
-    public void collideEffect(GameItem gi) {
-        ;
-    }
+    @Override public String toString() {return "";}
+    @Override public void collideEffect(GameItem gi) {}
 
     @Override
     public void setItemType(String type) {

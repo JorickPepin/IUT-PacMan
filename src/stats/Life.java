@@ -2,16 +2,19 @@
 package stats;
 
 import iut.GameItem;
-import pacman.Instruction;
 import pacman.PacMan;
 
 /**
- * Classe représentant la gestion des vies
+ * Classe contenant la gestion des vies du joueur
  * @author Jorick
  */
 public class Life extends GameItem {
 
+    /**
+     * Nombre de vies du joueur
+     */
     private int nbLives;
+    
     private final PacMan game;
     
     /**
@@ -42,10 +45,26 @@ public class Life extends GameItem {
         }     
     }
     
+    /**
+     * Méthode qui retourne le nombre de vies du joueur
+     * @return 
+     */
     public int getNbLives() {
         return nbLives;
     }
+
+    /**
+     * Méthode permettant de fixer le nombre de vies
+     * @param nbLives = le nombre de vies
+     */
+    public void setNbLives(int nbLives) {
+        this.nbLives = nbLives;
         
+        if (nbLives == 2) {
+            this.changeSprite("images/Lives/2");
+        }
+    }
+      
     @Override public boolean isCollide(GameItem gi) {return false;}
     @Override public void collideEffect(GameItem gi) {}
     @Override public String getItemType() {return "Life";}
