@@ -313,6 +313,9 @@ public abstract class Ghost extends BoxGameItem implements KeyListener {
         
         // on remet le compteur d'attente à 0
         this.isReadyToGo = 0;
+        
+        // le fantôme n'est plus considéré en collision avec Pac-Man
+        this.collisionWithPacman = false;
     }
     
     /**

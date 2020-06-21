@@ -16,7 +16,7 @@ public class FullSquare extends Square {
     public FullSquare(Game g, int i, int j) {
         super(g, "images/Squares/full", i, j);
     }
-
+    
     @Override public void collideEffect(GameItem gi) {}
     @Override public String toString() {return "";}
 
