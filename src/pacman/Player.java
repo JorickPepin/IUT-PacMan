@@ -437,7 +437,7 @@ public class Player extends BoxGameItem implements KeyListener {
             game.addItem(newChance);
 
             // on enlève une vie au joueur
-            this.objLife.removeALife();
+            this.objLife.setNbLives(objLife.getNbLives() - 1);
 
             // l'utilisateur a utilisé toutes ses vies, on met fin à la partie
             if (objLife.getNbLives() == -1) {
@@ -530,13 +530,11 @@ public class Player extends BoxGameItem implements KeyListener {
         
         game.addItem(this);
         game.createItems();
-        
-        if (objLife.getNbLives() == 2) {
-           objLife.changeSprite("images/Lives/2"); 
-        } else if (objLife.getNbLives() == 1) {
-            objLife.changeSprite("images/Lives/1");
-        }
-        
+             
+        int nbLives = objLife.getNbLives();
+        game.remove(objLife);
+        objLife = new Life(game, "images/Lives/2", 73, 541);    
+        objLife.setNbLives(nbLives);
         game.addItem(this.objLife);
         
         restartGame();

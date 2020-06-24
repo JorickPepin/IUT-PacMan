@@ -32,20 +32,6 @@ public class Life extends GameItem {
     }
 
     /**
-     * Méthode permettant d'enlever une vie au joueur
-     */
-    public void removeALife() {
-
-        this.nbLives--;
-      
-        if (nbLives == 1) { // il reste une vie au joueur
-            this.changeSprite("images/Lives/1");
-        } else { // le joeur n'a plus de vie
-            game.remove(this);
-        }     
-    }
-    
-    /**
      * Méthode qui retourne le nombre de vies du joueur
      * @return 
      */
@@ -60,8 +46,15 @@ public class Life extends GameItem {
     public void setNbLives(int nbLives) {
         this.nbLives = nbLives;
         
-        if (nbLives == 2) {
-            this.changeSprite("images/Lives/2");
+        switch (nbLives) {
+            case 2 :
+                this.changeSprite("images/Lives/2");
+                break;
+            case 1: 
+                this.changeSprite("images/Lives/1");
+                break;
+            case 0: 
+                this.changeSprite("images/Lives/0");
         }
     }
       
