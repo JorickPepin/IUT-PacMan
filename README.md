@@ -4,7 +4,7 @@ Pac-Man game in Java.
 
 ## Context
 
-This is a second semester project. Its objective is to create a game from a small game framework and its design. Only the code is available here.
+This is a second semester project. Its objective is to create a game from a small game framework. Design and code were requested but only the code is available here.
 
 ## Main tools used
 
